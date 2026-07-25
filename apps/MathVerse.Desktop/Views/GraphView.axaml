@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MathVerse.Desktop.Views.GraphView">
+
+  <Border Background="{DynamicResource SurfaceBrush}">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="12">
+      <TextBlock Text="&#x223F;" FontSize="48" HorizontalAlignment="Center"
+                 Foreground="{DynamicResource AccentPurpleBrush}" Opacity="0.3"/>
+      <TextBlock Text="Graph Studio" FontSize="20" FontWeight="300" HorizontalAlignment="Center"
+                 Foreground="{DynamicResource TextPrimaryBrush}"/>
+      <TextBlock Text="Plot functions in 2D and 3D" FontSize="13" HorizontalAlignment="Center"
+                 Foreground="{DynamicResource TextSecondaryBrush}"/>
+    </StackPanel>
+  </Border>
+
+</UserControl>

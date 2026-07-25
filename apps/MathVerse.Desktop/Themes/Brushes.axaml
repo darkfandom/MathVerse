@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Canvas -->
+  <SolidColorBrush x:Key="CanvasBrush" Color="{StaticResource CanvasColor}" />
+
+  <!-- Surfaces -->
+  <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+  <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="{StaticResource SurfaceElevatedColor}" />
+
+  <!-- Borders -->
+  <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+
+  <!-- Text -->
+  <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+  <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+  <SolidColorBrush x:Key="TextTertiaryBrush" Color="{StaticResource TextTertiaryColor}" />
+
+  <!-- Accents -->
+  <SolidColorBrush x:Key="AccentBlueBrush" Color="{StaticResource AccentBlueColor}" />
+  <SolidColorBrush x:Key="AccentPurpleBrush" Color="{StaticResource AccentPurpleColor}" />
+  <SolidColorBrush x:Key="AccentTealBrush" Color="{StaticResource AccentTealColor}" />
+  <SolidColorBrush x:Key="AccentOrangeBrush" Color="{StaticResource AccentOrangeColor}" />
+  <SolidColorBrush x:Key="AccentRedBrush" Color="{StaticResource AccentRedColor}" />
+  <SolidColorBrush x:Key="AccentGoldBrush" Color="{StaticResource AccentGoldColor}" />
+
+  <!-- Glow Brushes -->
+  <SolidColorBrush x:Key="GlowBlueBrush" Color="#264A9EFF" />
+  <SolidColorBrush x:Key="GlowPurpleBrush" Color="#1F8B5CF6" />
+
+</ResourceDictionary>

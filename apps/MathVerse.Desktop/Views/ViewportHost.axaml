@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MathVerse.Desktop.ViewModels"
+             xmlns:views="using:MathVerse.Desktop.Views"
+             x:Class="MathVerse.Desktop.Views.ViewportHost"
+             x:DataType="vm:WorkspaceViewModel">
+
+  <ContentControl Content="{Binding CurrentPage}">
+    <ContentControl.DataTemplates>
+      <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+        <views:HomeView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:EvaluateViewModel}">
+        <views:EvaluateView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:GraphViewModel}">
+        <views:GraphView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:VisualizeViewModel}">
+        <views:VisualizeView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:GeometryViewModel}">
+        <views:GeometryView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:SimulateViewModel}">
+        <views:SimulateView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:AnimateViewModel}">
+        <views:AnimateView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:AiViewModel}">
+        <views:AiView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:PublishViewModel}">
+        <views:PublishView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:DataViewModel}">
+        <views:DataView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+        <views:SettingsView/>
+      </DataTemplate>
+    </ContentControl.DataTemplates>
+  </ContentControl>
+
+</UserControl>

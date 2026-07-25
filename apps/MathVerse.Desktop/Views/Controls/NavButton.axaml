@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MathVerse.Desktop.Views.Controls.NavButton"
+             x:Name="Root"
+             Cursor="Hand"
+             Margin="0,1">
+
+  <Border x:Name="RootBorder" CornerRadius="8" Padding="0,7" Margin="4,0">
+    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+      <TextBlock x:Name="GlyphText" Text="{Binding Glyph, ElementName=Root}"
+                 FontSize="18" VerticalAlignment="Center" Width="20" TextAlignment="Center"/>
+      <TextBlock x:Name="LabelText" Text="{Binding Label, ElementName=Root}"
+                 FontSize="13" FontWeight="500" VerticalAlignment="Center"/>
+    </StackPanel>
+  </Border>
+
+</UserControl>

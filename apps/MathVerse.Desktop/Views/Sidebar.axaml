@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:MathVerse.Desktop.Views.Controls"
+             x:Class="MathVerse.Desktop.Views.Sidebar"
+             x:Name="Root"
+             Width="200"
+             Background="{DynamicResource CanvasBrush}">
+
+  <DockPanel>
+    <!-- Logo -->
+    <Border DockPanel.Dock="Top" Height="48" Padding="14,0">
+      <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <Border Background="{DynamicResource AccentTealBrush}" CornerRadius="8"
+                Width="28" Height="28" Opacity="0.9">
+          <TextBlock Text="M" FontSize="14" FontWeight="700"
+                     Foreground="{DynamicResource CanvasBrush}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <TextBlock Text="MathVerse" FontSize="14" FontWeight="600"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
+                   VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Settings at bottom -->
+    <Border DockPanel.Dock="Bottom" Height="48" Padding="14,0">
+      <controls:NavButton x:Name="BtnSettings" Glyph="&#x2699;" Label="Settings"
+                          Tag="settings" Click="OnNavClick"/>
+    </Border>
+
+    <!-- Divider before settings -->
+    <Border DockPanel.Dock="Bottom" Height="1" Background="{DynamicResource BorderBrush}" Margin="14,4"/>
+
+    <!-- Scrollable nav -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="2" Margin="0,8,0,8">
+        <controls:NavButton x:Name="BtnHome" Glyph="&#x2302;" Label="Home"
+                            Tag="home" IsActive="True" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnEvaluate" Glyph="&#x0192;" Label="Evaluate"
+                            Tag="evaluate" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnGraph" Glyph="&#x223F;" Label="Graph Studio"
+                            Tag="graph" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnVisualize" Glyph="&#x25CE;" Label="Visualize"
+                            Tag="visualize" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnGeometry" Glyph="&#x25B3;" Label="Geometry"
+                            Tag="geometry" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnSimulate" Glyph="&#x2697;" Label="Simulate"
+                            Tag="simulate" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnAnimate" Glyph="&#x25B6;" Label="Animate"
+                            Tag="animate" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnAi" Glyph="&#x2728;" Label="AI Assistant"
+                            Tag="ai" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnPublish" Glyph="&#x270E;" Label="Publish"
+                            Tag="publish" Click="OnNavClick"/>
+        <controls:NavButton x:Name="BtnData" Glyph="&#x2261;" Label="Data"
+                            Tag="data" Click="OnNavClick"/>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+
+</UserControl>

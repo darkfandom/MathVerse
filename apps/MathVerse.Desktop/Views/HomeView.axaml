@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:MathVerse.Desktop.ViewModels"
+             xmlns:controls="using:MathVerse.Desktop.Views.Controls"
+             x:Class="MathVerse.Desktop.Views.HomeView"
+             x:DataType="vm:HomeViewModel">
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Spacing="32" Margin="40,32,40,40">
+
+      <!-- Welcome Section -->
+      <StackPanel Spacing="8">
+        <TextBlock Text="{Binding WelcomeMessage}" FontSize="28" FontWeight="300"
+                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+        <TextBlock Text="{Binding StatusSummary}" FontSize="14"
+                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+      </StackPanel>
+
+      <!-- Module Cards Grid -->
+      <StackPanel Spacing="12">
+        <TextBlock Text="MODULES" FontSize="11" FontWeight="700"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   Opacity="0.8" Margin="0,0,0,4"/>
+        <WrapPanel Orientation="Horizontal">
+          <WrapPanel.Styles>
+            <Style Selector="WrapPanel > Button">
+              <Setter Property="Margin" Value="0,0,16,12"/>
+            </Style>
+          </WrapPanel.Styles>
+          <controls:PageCard CardTitle="Evaluate" CardSubtitle="Quick compute &amp; solve expressions" Tag="evaluate" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Graph Studio" CardSubtitle="Plot functions in 2D and 3D" Tag="graph" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Visualization" CardSubtitle="Create stunning 3D visualizations" Tag="visualize" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Geometry" CardSubtitle="Explore shapes and constructions" Tag="geometry" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Simulation" CardSubtitle="Run physics and domain simulations" Tag="simulate" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Animate" CardSubtitle="Keyframe and expression animation" Tag="animate" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="AI Assistant" CardSubtitle="Get help from the AI tutor" Tag="ai" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Publications" CardSubtitle="Export papers and notes" Tag="publish" Click="OnCardClick"/>
+          <controls:PageCard CardTitle="Data Analysis" CardSubtitle="Import, visualize, and analyze data" Tag="data" Click="OnCardClick"/>
+        </WrapPanel>
+      </StackPanel>
+
+    </StackPanel>
+  </ScrollViewer>
+
+</UserControl>

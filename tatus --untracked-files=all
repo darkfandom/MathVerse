@@ -1,0 +1,32 @@
+warning: in the working copy of 'Directory.Packages.props', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/Directory.Packages.props b/Directory.Packages.props[m
+[1mindex 90e22bc..2ca067c 100644[m
+[1m--- a/Directory.Packages.props[m
+[1m+++ b/Directory.Packages.props[m
+[36m@@ -48,6 +48,14 @@[m
+     <!-- Math -->[m
+     <PackageVersion Include="MathNet.Numerics" Version="5.0.0" />[m
+ [m
+[32m+[m[32m    <!-- UI -->[m
+[32m+[m[32m    <PackageVersion Include="Avalonia" Version="11.1.0" />[m
+[32m+[m[32m    <PackageVersion Include="Avalonia.Desktop" Version="11.1.0" />[m
+[32m+[m[32m    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.1.0" />[m
+[32m+[m[32m    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.1.0" />[m
+[32m+[m[32m    <PackageVersion Include="Avalonia.Diagnostics" Version="11.1.0" />[m
+[32m+[m[32m    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />[m
+[32m+[m
+     <!-- Web -->[m
+     <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="8.0.2" />[m
+ [m
+[1mdiff --git a/MathVerse.slnx b/MathVerse.slnx[m
+[1mindex 7e7c2d0..ee6272a 100644[m
+[1m--- a/MathVerse.slnx[m
+[1m+++ b/MathVerse.slnx[m
+[36m@@ -1,4 +1,7 @@[m
+ <Solution>[m
+[32m+[m[32m  <Folder Name="/apps/">[m
+[32m+[m[32m    <Project Path="apps/MathVerse.Desktop/MathVerse.Desktop.csproj" />[m
+[32m+[m[32m  </Folder>[m
+   <Folder Name="/src/" />[m
+   <Folder Name="/src/Application/">[m
+     <Project Path="src/Application/MathVerse.Application.csproj" />[m

@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/apps/">
+    <Project Path="apps/MathVerse.Desktop/MathVerse.Desktop.csproj" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Application/">
     <Project Path="src/Application/MathVerse.Application.csproj" />
