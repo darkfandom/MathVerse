@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Symbolic</RootNamespace>
+    <AssemblyName>MathVerse.Math.Symbolic</AssemblyName>
+    <Description>MathVerse symbolic mathematics</Description>
+    <PackageId>MathVerse.Math.Symbolic</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Simplification\MathVerse.Math.Simplification.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

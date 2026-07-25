@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup><NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>MathVerse.Application.Tests</RootNamespace>
+    <AssemblyName>MathVerse.Application.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Application\MathVerse.Application.csproj" />
+    <ProjectReference Include="..\..\src\Domain\MathVerse.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>
+

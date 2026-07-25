@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Rendering.Abstractions</RootNamespace>
+    <AssemblyName>MathVerse.Rendering.Abstractions</AssemblyName>
+    <Description>MathVerse rendering abstractions</Description>
+    <PackageId>MathVerse.Rendering.Abstractions</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

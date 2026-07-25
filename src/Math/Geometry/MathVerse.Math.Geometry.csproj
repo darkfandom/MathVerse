@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Geometry</RootNamespace>
+    <AssemblyName>MathVerse.Math.Geometry</AssemblyName>
+    <Description>MathVerse geometry, graphics, visualization: 2D/3D primitives, meshes, curves, surfaces, transformations, scene graph, plotting, cameras, lighting, picking, animation, rendering abstractions</Description>
+    <PackageId>MathVerse.Math.Geometry</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+  </ItemGroup>
+
+</Project>

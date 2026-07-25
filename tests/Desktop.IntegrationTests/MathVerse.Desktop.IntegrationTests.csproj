@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>MathVerse.Desktop.IntegrationTests</RootNamespace>
+    <AssemblyName>MathVerse.Desktop.IntegrationTests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Math\Parsing\MathVerse.Math.Parsing.csproj" />
+    <ProjectReference Include="..\..\src\Math\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\..\src\Math\Simplification\MathVerse.Math.Simplification.csproj" />
+    <ProjectReference Include="..\..\src\Math\Calculus\MathVerse.Math.Calculus.csproj" />
+    <ProjectReference Include="..\..\src\Math\Algebra\MathVerse.Math.Algebra.csproj" />
+    <ProjectReference Include="..\..\src\Math\Visualization\MathVerse.Math.Visualization.csproj" />
+    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Rendering.Vulkan</RootNamespace>
+    <AssemblyName>MathVerse.Rendering.Vulkan</AssemblyName>
+    <Description>MathVerse Vulkan rendering backend</Description>
+    <PackageId>MathVerse.Rendering.Vulkan</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abstractions\MathVerse.Rendering.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

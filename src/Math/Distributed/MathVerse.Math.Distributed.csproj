@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Distributed</RootNamespace>
+    <AssemblyName>MathVerse.Math.Distributed</AssemblyName>
+    <Description>MathVerse distributed computing, parallel execution, SIMD, GPU abstraction, job scheduling, memory management, and HPC framework</Description>
+    <PackageId>MathVerse.Math.Distributed</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\Simulation\MathVerse.Math.Simulation.csproj" />
+    <ProjectReference Include="..\AI\MathVerse.Math.AI.csproj" />
+    <ProjectReference Include="..\Geometry.Advanced\MathVerse.Math.Geometry.Advanced.csproj" />
+    <ProjectReference Include="..\Visualization\MathVerse.Math.Visualization.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Visualization</RootNamespace>
+    <AssemblyName>MathVerse.Math.Visualization</AssemblyName>
+    <Description>MathVerse scientific visualization: 2D/3D plotting, function rendering, geometry visualization, CAS trees, AI charts, simulation rendering, animation, color maps, export, interaction</Description>
+    <PackageId>MathVerse.Math.Visualization</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+    <ProjectReference Include="..\Geometry.Advanced\MathVerse.Math.Geometry.Advanced.csproj" />
+    <ProjectReference Include="..\Simulation\MathVerse.Math.Simulation.csproj" />
+    <ProjectReference Include="..\AI\MathVerse.Math.AI.csproj" />
+  </ItemGroup>
+
+</Project>

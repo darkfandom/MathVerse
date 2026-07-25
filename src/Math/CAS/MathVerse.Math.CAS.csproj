@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.CAS</RootNamespace>
+    <AssemblyName>MathVerse.Math.CAS</AssemblyName>
+    <Description>MathVerse Computer Algebra System: simplification, differentiation, integration, equation solving, polynomial algebra</Description>
+    <PackageId>MathVerse.Math.CAS</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Semantics\MathVerse.Math.Semantics.csproj" />
+    <ProjectReference Include="..\Parsing\MathVerse.Math.Parsing.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+  </ItemGroup>
+
+</Project>

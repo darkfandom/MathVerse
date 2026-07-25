@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Foundation</RootNamespace>
+    <AssemblyName>MathVerse.Math.Foundation</AssemblyName>
+    <Description>MathVerse mathematical foundation: domains, constants, dimensions, units, physical quantities, dimensional analysis</Description>
+    <PackageId>MathVerse.Math.Foundation</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Semantics\MathVerse.Math.Semantics.csproj" />
+    <ProjectReference Include="..\Parsing\MathVerse.Math.Parsing.csproj" />
+  </ItemGroup>
+
+</Project>

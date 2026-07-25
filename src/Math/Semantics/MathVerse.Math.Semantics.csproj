@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Semantics</RootNamespace>
+    <AssemblyName>MathVerse.Math.Semantics</AssemblyName>
+    <Description>MathVerse semantic analysis and symbol resolution</Description>
+    <PackageId>MathVerse.Math.Semantics</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Parsing\MathVerse.Math.Parsing.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Compiler</RootNamespace>
+    <AssemblyName>MathVerse.Math.Compiler</AssemblyName>
+    <Description>MathVerse compiler infrastructure: IR, expression compilation, automatic differentiation, computational graphs, optimizations, vectorization, parallel compilation, code generation, runtime optimization, kernel fusion, memory optimization, caching, tensor compilation, scientific compilation</Description>
+    <PackageId>MathVerse.Math.Compiler</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\AI\MathVerse.Math.AI.csproj" />
+    <ProjectReference Include="..\Simulation\MathVerse.Math.Simulation.csproj" />
+    <ProjectReference Include="..\Geometry.Advanced\MathVerse.Math.Geometry.Advanced.csproj" />
+    <ProjectReference Include="..\Visualization\MathVerse.Math.Visualization.csproj" />
+    <ProjectReference Include="..\Distributed\MathVerse.Math.Distributed.csproj" />
+    <ProjectReference Include="..\DataScience\MathVerse.Math.DataScience.csproj" />
+    <ProjectReference Include="..\Interop\MathVerse.Math.Interop.csproj" />
+    <ProjectReference Include="..\Quantum\MathVerse.Math.Quantum.csproj" />
+  </ItemGroup>
+
+</Project>

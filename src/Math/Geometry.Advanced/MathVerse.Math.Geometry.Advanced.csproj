@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Geometry.Advanced</RootNamespace>
+    <AssemblyName>MathVerse.Math.Geometry.Advanced</AssemblyName>
+    <Description>MathVerse advanced computational geometry: convex hull, Voronoi, Delaunay, boolean geometry, sweep line, spatial indexing, mesh processing, surfaces, curves, collision, serialization</Description>
+    <PackageId>MathVerse.Math.Geometry.Advanced</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+    <ProjectReference Include="..\Geometry\MathVerse.Math.Geometry.csproj" />
+  </ItemGroup>
+
+</Project>

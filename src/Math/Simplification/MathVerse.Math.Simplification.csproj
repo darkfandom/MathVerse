@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Simplification</RootNamespace>
+    <AssemblyName>MathVerse.Math.Simplification</AssemblyName>
+    <Description>MathVerse mathematical simplification engine</Description>
+    <PackageId>MathVerse.Math.Simplification</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

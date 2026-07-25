@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.AI</RootNamespace>
+    <AssemblyName>MathVerse.Math.AI</AssemblyName>
+    <Description>MathVerse artificial intelligence, machine learning, optimization, neural networks, Bayesian models, symbolic AI, reinforcement learning, graph intelligence, and intelligent integration framework</Description>
+    <PackageId>MathVerse.Math.AI</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+    <ProjectReference Include="..\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\Performance\MathVerse.Math.Performance.csproj" />
+    <ProjectReference Include="..\Geometry.Advanced\MathVerse.Math.Geometry.Advanced.csproj" />
+    <ProjectReference Include="..\Simulation\MathVerse.Math.Simulation.csproj" />
+  </ItemGroup>
+
+</Project>

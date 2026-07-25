@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Rendering.OpenGL</RootNamespace>
+    <AssemblyName>MathVerse.Rendering.OpenGL</AssemblyName>
+    <Description>MathVerse OpenGL rendering backend</Description>
+    <PackageId>MathVerse.Rendering.OpenGL</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abstractions\MathVerse.Rendering.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

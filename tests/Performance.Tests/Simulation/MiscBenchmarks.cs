@@ -1,0 +1,74 @@
+namespace MathVerse.Performance.Tests.Simulation;
+
+using System.Collections.Immutable;
+using BenchmarkDotNet.Attributes;
+using MathVerse.Math.Numerics.LinearAlgebra;
+using MathVerse.Math.Simulation.Core;
+using MathVerse.Math.Simulation.Physics;
+using MathVerse.Math.Simulation.Events;
+using MathVerse.Math.Simulation.Diagnostics;
+using MathVerse.Math.Simulation.Time;
+using MathVerse.Math.Simulation.SignalProcessing;
+using MathVerse.Math.Simulation.MonteCarlo;
+using MathVerse.Math.Simulation.Solvers;
+using MathVerse.Math.Simulation.Configuration;
+using MathVerse.Math.Simulation.Visualization;
+using MathVerse.Math.Simulation.Thermodynamics;
+using MathVerse.Math.Simulation.Electromagnetics;
+using MathVerse.Math.Simulation.FluidDynamics;
+using MathVerse.Math.Simulation.Chemistry;
+using MathVerse.Math.Simulation.Biology;
+using MathVerse.Math.Simulation.Finance;
+using MathVerse.Math.Simulation.ControlSystems;
+using System.Numerics;
+using MVVector = MathVerse.Math.Numerics.LinearAlgebra.Vector;
+
+[MemoryDiagnoser]
+public class MiscBenchmarks
+{
+    [Benchmark] public SimulationConfiguration Config_Default() => SimulationConfiguration.Default;
+    [Benchmark] public PhysicsConfiguration PhysicsConfig_Default() => PhysicsConfiguration.Default;
+    [Benchmark] public ThermodynamicsConfiguration ThermoConfig_Default() => ThermodynamicsConfiguration.Default;
+    [Benchmark] public ElectromagneticsConfiguration ElectromagConfig_Default() => ElectromagneticsConfiguration.Default;
+    [Benchmark] public FluidDynamicsConfiguration FluidConfig_Default() => FluidDynamicsConfiguration.Default;
+    [Benchmark] public ChemistryConfiguration ChemConfig_Default() => ChemistryConfiguration.Default;
+    [Benchmark] public BiologyConfiguration BioConfig_Default() => BiologyConfiguration.Default;
+    [Benchmark] public FinanceConfiguration FinanceConfig_Default() => FinanceConfiguration.Default;
+    [Benchmark] public SignalProcessingConfiguration SignalConfig_Default() => SignalProcessingConfiguration.Default;
+    [Benchmark] public ControlSystemsConfiguration ControlConfig_Default() => ControlSystemsConfiguration.Default;
+    [Benchmark] public MonteCarloConfiguration MCConfig_Default() => MonteCarloConfiguration.Default;
+    [Benchmark] public SolversConfiguration SolverConfig_Default() => SolversConfiguration.Default;
+    [Benchmark] public DiagnosticsConfiguration DiagConfig_Default() => DiagnosticsConfiguration.Default;
+    [Benchmark] public VisualizationConfiguration VisConfig_Default() => VisualizationConfiguration.Default;
+    [Benchmark] public double CarnotEfficiency() => ThermodynamicsEngine.CarnotEfficiency(500.0, 300.0);
+    [Benchmark] public double EntropyChange() => ThermodynamicsEngine.EntropyChange(100.0, 300.0);
+    [Benchmark] public double GibbsFreeEnergy() => ThermodynamicsEngine.GibbsFreeEnergy(1000.0, 300.0, 5.0);
+    [Benchmark] public double HeatCapacity() => ThermodynamicsEngine.HeatCapacity(2.0, 4186.0);
+    [Benchmark] public double SpecificHeatRatio() => ThermodynamicsEngine.SpecificHeatRatio(718.0, 1005.0);
+    [Benchmark] public double IdealGasLaw() => ThermodynamicsEngine.IdealGasLaw(101325.0, 0.0224, 1.0, 273.15);
+    [Benchmark] public double ReynoldsNumber() => FluidDynamicsEngine.ReynoldsNumber(1000.0, 1.0, 1.0, 0.001);
+    [Benchmark] public FlowRegime DetermineRegime_Laminar() => FluidDynamicsEngine.DetermineRegime(500.0);
+    [Benchmark] public FlowRegime DetermineRegime_Turbulent() => FluidDynamicsEngine.DetermineRegime(50000.0);
+    [Benchmark] public double FrictionFactorLaminar() => FluidDynamicsEngine.FrictionFactorLaminar(1000.0);
+    [Benchmark] public double MachNumber() => FluidDynamicsEngine.MachNumber(100.0, 340.0);
+    [Benchmark] public double PressureDrop() => FluidDynamicsEngine.PressureDrop(0.02, 10.0, 0.1, 1000.0, 1.0);
+    [Benchmark] public MVVector CoulombForce_LikeCharges() => ElectromagneticsEngine.CoulombForce(new MVVector(new double[] { 1, 0, 0 }), 1.0, 1.0);
+    [Benchmark] public MVVector CoulombForce_OppositeCharges() => ElectromagneticsEngine.CoulombForce(new MVVector(new double[] { 1, 0, 0 }), 1.0, -1.0);
+    [Benchmark] public double Capacitance() => ElectromagneticsEngine.Capacitance(1.0, 0.01, 1.0);
+    [Benchmark] public double Inductance() => ElectromagneticsEngine.Inductance(1.0, 0.01, 100);
+    [Benchmark] public double ResonanceFrequency() => ElectromagneticsEngine.ResonanceFrequency(1.0, 1e-6);
+    [Benchmark] public double EquilibriumConstant() => ChemistryEngine.EquilibriumConstant(-10000.0, 298.15);
+    [Benchmark] public double Chemistry_GibbsFreeEnergy() => ChemistryEngine.GibbsFreeEnergy(1000.0, 5.0, 298.15);
+    [Benchmark] public double ArrheniusRate() => ChemistryEngine.ArrheniusRate(1e13, 50000.0, 300.0);
+    [Benchmark] public double LogisticGrowth() => BiologyEngine.LogisticGrowth(100.0, 0.1, 1000.0, 0.1);
+    [Benchmark] public double ExponentialGrowth() => BiologyEngine.ExponentialGrowth(100.0, 0.1, 0.1);
+    [Benchmark] public double BlackScholesCall() => FinanceEngine.BlackScholesCall(100.0, 100.0, 1.0, 0.05, 0.2);
+    [Benchmark] public double BlackScholesPut() => FinanceEngine.BlackScholesPut(100.0, 100.0, 1.0, 0.05, 0.2);
+    [Benchmark] public double CompoundInterest() => FinanceEngine.CompoundInterest(1000.0, 0.05, 10.0, 12);
+    [Benchmark] public double PresentValue() => FinanceEngine.PresentValue(1000.0, 0.05, 10.0);
+    [Benchmark] public double FutureValue() => FinanceEngine.FutureValue(1000.0, 0.05, 10.0);
+    [Benchmark] public PlotSeries CreateLineSeries() => VisualizationModels.CreateLineSeries("test", ImmutableArray.Create(1.0, 2.0, 3.0), ImmutableArray.Create(4.0, 5.0, 6.0));
+    [Benchmark] public PlotSeries CreateScatterSeries() => VisualizationModels.CreateScatterSeries("scatter", ImmutableArray.Create(1.0, 2.0), ImmutableArray.Create(3.0, 4.0));
+    [Benchmark] public double NetPresentValue() => FinanceEngine.NetPresentValue(0.1, ImmutableArray.Create(0.0, 100.0, 100.0, 100.0));
+    [Benchmark] public double AnnuityPayment() => FinanceEngine.AnnuityPayment(100000.0, 0.05, 30);
+}

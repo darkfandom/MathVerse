@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Performance</RootNamespace>
+    <AssemblyName>MathVerse.Math.Performance</AssemblyName>
+    <Description>MathVerse performance infrastructure: interning, pooling, caching, optimization, diagnostics</Description>
+    <PackageId>MathVerse.Math.Performance</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Types\MathVerse.Math.Types.csproj" />
+  </ItemGroup>
+
+</Project>

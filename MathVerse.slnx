@@ -1,0 +1,202 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Application/">
+    <Project Path="src/Application/MathVerse.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/Collaboration/">
+    <Project Path="src/Collaboration/MathVerse.Collaboration.csproj" />
+  </Folder>
+  <Folder Name="/src/Domain/">
+    <Project Path="src/Domain/MathVerse.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/MathVerse.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/MathVerse.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Kernel/">
+    <Project Path="src/Kernel/MathVerse.Kernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/" />
+  <Folder Name="/src/Math/AI/">
+    <Project Path="src/Math/AI/MathVerse.Math.AI.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Algebra/">
+    <Project Path="src/Math/Algebra/MathVerse.Math.Algebra.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Calculus/">
+    <Project Path="src/Math/Calculus/MathVerse.Math.Calculus.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/CAS/">
+    <Project Path="src/Math/CAS/MathVerse.Math.CAS.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Core/">
+    <Project Path="src/Math/Core/MathVerse.Math.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/DataScience/">
+    <Project Path="src/Math/DataScience/MathVerse.Math.DataScience.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Distributed/">
+    <Project Path="src/Math/Distributed/MathVerse.Math.Distributed.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Interop/">
+    <Project Path="src/Math/Interop/MathVerse.Math.Interop.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Quantum/">
+    <Project Path="src/Math/Quantum/MathVerse.Math.Quantum.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Compiler/">
+    <Project Path="src/Math/Compiler/MathVerse.Math.Compiler.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Verification/">
+    <Project Path="src/Math/Verification/MathVerse.Math.Verification.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/HPC/">
+    <Project Path="src/Math/HPC/MathVerse.Math.HPC.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Foundation/">
+    <Project Path="src/Math/Foundation/MathVerse.Math.Foundation.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Geometry.Advanced/">
+    <Project Path="src/Math/Geometry.Advanced/MathVerse.Math.Geometry.Advanced.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Geometry/">
+    <Project Path="src/Math/Geometry/MathVerse.Math.Geometry.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Numerical/">
+    <Project Path="src/Math/Numerical/MathVerse.Math.Numerical.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Numerics/">
+    <Project Path="src/Math/Numerics/MathVerse.Math.Numerics.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Optimization/">
+    <Project Path="src/Math/Optimization/MathVerse.Math.Optimization.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Parsing/">
+    <Project Path="src/Math/Parsing/MathVerse.Math.Parsing.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Performance/">
+    <Project Path="src/Math/Performance/MathVerse.Math.Performance.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Semantics/">
+    <Project Path="src/Math/Semantics/MathVerse.Math.Semantics.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Simplification/">
+    <Project Path="src/Math/Simplification/MathVerse.Math.Simplification.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Simulation/">
+    <Project Path="src/Math/Simulation/MathVerse.Math.Simulation.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Statistics/">
+    <Project Path="src/Math/Statistics/MathVerse.Math.Statistics.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Symbolic/">
+    <Project Path="src/Math/Symbolic/MathVerse.Math.Symbolic.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Types/">
+    <Project Path="src/Math/Types/MathVerse.Math.Types.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Units/">
+    <Project Path="src/Math/Units/MathVerse.Math.Units.csproj" />
+  </Folder>
+  <Folder Name="/src/Math/Visualization/">
+    <Project Path="src/Math/Visualization/MathVerse.Math.Visualization.csproj" />
+  </Folder>
+  <Folder Name="/src/Persistence/">
+    <Project Path="src/Persistence/MathVerse.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Plugins/" />
+  <Folder Name="/src/Plugins/Abstractions/">
+    <Project Path="src/Plugins/Abstractions/MathVerse.Plugins.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/src/Plugins/Host/">
+    <Project Path="src/Plugins/Host/MathVerse.Plugins.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Rendering/" />
+  <Folder Name="/src/Rendering/Abstractions/">
+    <Project Path="src/Rendering/Abstractions/MathVerse.Rendering.Abstractions.csproj" />
+  </Folder>
+  <Folder Name="/src/Rendering/Metal/">
+    <Project Path="src/Rendering/Metal/MathVerse.Rendering.Metal.csproj" />
+  </Folder>
+  <Folder Name="/src/Rendering/OpenGL/">
+    <Project Path="src/Rendering/OpenGL/MathVerse.Rendering.OpenGL.csproj" />
+  </Folder>
+  <Folder Name="/src/Rendering/Vulkan/">
+    <Project Path="src/Rendering/Vulkan/MathVerse.Rendering.Vulkan.csproj" />
+  </Folder>
+  <Folder Name="/src/Rendering/WebGPU/">
+    <Project Path="src/Rendering/WebGPU/MathVerse.Rendering.WebGPU.csproj" />
+  </Folder>
+  <Folder Name="/src/VR/">
+    <Project Path="src/VR/MathVerse.VR.csproj" />
+  </Folder>
+  <Folder Name="/src/Web/">
+    <Project Path="src/Web/MathVerse.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Application.Tests/">
+    <Project Path="tests/Application.Tests/MathVerse.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/CAS.Tests/">
+    <Project Path="tests/CAS.Tests/MathVerse.CAS.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Domain.Tests/">
+    <Project Path="tests/Domain.Tests/MathVerse.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Expression.Tests/">
+    <Project Path="tests/Expression.Tests/MathVerse.Expression.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Infrastructure.Tests/">
+    <Project Path="tests/Infrastructure.Tests/MathVerse.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Integration.Tests/">
+    <Project Path="tests/Integration.Tests/MathVerse.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Kernel.Tests/">
+    <Project Path="tests/Kernel.Tests/MathVerse.Kernel.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Math.Core.Tests/">
+    <Project Path="tests/Math.Core.Tests/MathVerse.Math.Core.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Math.Numerical.Tests/">
+    <Project Path="tests/Math.Numerical.Tests/MathVerse.Math.Numerical.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Math.Parsing.Tests/">
+    <Project Path="tests/Math.Parsing.Tests/MathVerse.Math.Parsing.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Math.Simplification.Tests/">
+    <Project Path="tests/Math.Simplification.Tests/MathVerse.Math.Simplification.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Numerics.Tests/">
+    <Project Path="tests/Numerics.Tests/MathVerse.Numerics.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Performance.Tests/">
+    <Project Path="tests/Performance.Tests/MathVerse.Performance.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Persistence.Tests/">
+    <Project Path="tests/Persistence.Tests/MathVerse.Persistence.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Semantics.Tests/">
+    <Project Path="tests/Semantics.Tests/MathVerse.Semantics.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Simulation.Tests/">
+    <Project Path="tests/Simulation.Tests/MathVerse.Simulation.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Geometry.Tests/">
+    <Project Path="tests/Geometry.Tests/MathVerse.Geometry.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Algebra.Tests/">
+    <Project Path="tests/Algebra.Tests/MathVerse.Algebra.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Calculus.Tests/">
+    <Project Path="tests/Calculus.Tests/MathVerse.Calculus.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Desktop.IntegrationTests/">
+    <Project Path="tests/Desktop.IntegrationTests/MathVerse.Desktop.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/TypeSystem.Tests/">
+    <Project Path="tests/TypeSystem.Tests/MathVerse.TypeSystem.Tests.csproj" />
+  </Folder>
+</Solution>

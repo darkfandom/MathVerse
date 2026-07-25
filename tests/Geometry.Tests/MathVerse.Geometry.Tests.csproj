@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>MathVerse.Geometry.Tests</RootNamespace>
+    <AssemblyName>MathVerse.Geometry.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Benchmarks\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Math\Geometry\MathVerse.Math.Geometry.csproj" />
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\..\src\Math\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\..\src\Math\Numerics\MathVerse.Math.Numerics.csproj" />
+    <ProjectReference Include="..\..\src\Math\CAS\MathVerse.Math.CAS.csproj" />
+    <ProjectReference Include="..\..\src\Math\Performance\MathVerse.Math.Performance.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>

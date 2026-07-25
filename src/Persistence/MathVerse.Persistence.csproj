@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Persistence</RootNamespace>
+    <AssemblyName>MathVerse.Persistence</AssemblyName>
+    <Description>MathVerse persistence layer</Description>
+    <PackageId>MathVerse.Persistence</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Domain\MathVerse.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="MessagePack" />
+    <PackageReference Include="System.IO.Compression" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>MathVerse.Calculus.Tests</RootNamespace>
+    <AssemblyName>MathVerse.Calculus.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Math\Calculus\MathVerse.Math.Calculus.csproj" />
+    <ProjectReference Include="..\..\src\Math\Simplification\MathVerse.Math.Simplification.csproj" />
+    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+</Project>

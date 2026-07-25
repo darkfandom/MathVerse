@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Calculus</RootNamespace>
+    <AssemblyName>MathVerse.Math.Calculus</AssemblyName>
+    <Description>MathVerse calculus operations</Description>
+    <PackageId>MathVerse.Math.Calculus</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Simplification\MathVerse.Math.Simplification.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

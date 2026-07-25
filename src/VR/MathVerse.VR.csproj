@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MathVerse.VR</RootNamespace>
+    <AssemblyName>MathVerse.VR</AssemblyName>
+    <Description>MathVerse VR Application</Description>
+    <PackageId>MathVerse.VR</PackageId>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\Domain\MathVerse.Domain.csproj" />
+    <ProjectReference Include="..\Application\MathVerse.Application.csproj" />
+    <ProjectReference Include="..\Infrastructure\MathVerse.Infrastructure.csproj" />
+    <ProjectReference Include="..\Host\MathVerse.Host.csproj" />
+    <ProjectReference Include="..\Persistence\MathVerse.Persistence.csproj" />
+    <ProjectReference Include="..\Math\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Math\Parsing\MathVerse.Math.Parsing.csproj" />
+    <ProjectReference Include="..\Math\Simplification\MathVerse.Math.Simplification.csproj" />
+    <ProjectReference Include="..\Rendering\Abstractions\MathVerse.Rendering.Abstractions.csproj" />
+    <ProjectReference Include="..\Rendering\OpenGL\MathVerse.Rendering.OpenGL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+  </ItemGroup>
+
+</Project>

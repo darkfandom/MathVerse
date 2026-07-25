@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Types</RootNamespace>
+    <AssemblyName>MathVerse.Math.Types</AssemblyName>
+    <Description>MathVerse mathematical type system, type inference, and type checking</Description>
+    <PackageId>MathVerse.Math.Types</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Semantics\MathVerse.Math.Semantics.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

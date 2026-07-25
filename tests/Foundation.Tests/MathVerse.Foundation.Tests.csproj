@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>MathVerse.Foundation.Tests</RootNamespace>
+    <AssemblyName>MathVerse.Foundation.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Benchmarks\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Math\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\..\src\Math\Types\MathVerse.Math.Types.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+</Project>

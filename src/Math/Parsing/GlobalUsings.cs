@@ -1,0 +1,12 @@
+global using MathVerse.Core;
+global using MathVerse.Math.Expressions;
+global using MathVerse.Math.Operators;
+global using MathVerse.Math.Parsing.Diagnostics;
+global using MathVerse.Math.Parsing.Lexer;
+global using MathVerse.Math.Parsing.Syntax;
+global using MathVerse.Math.Parsing.Parser;
+global using System;
+global using System.Collections.Generic;
+global using System.Collections.Immutable;
+global using System.Globalization;
+global using System.Text;

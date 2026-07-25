@@ -1,0 +1,13 @@
+global using System;
+global using System.Buffers;
+global using System.Collections.Generic;
+global using System.Collections.Immutable;
+global using System.Linq;
+global using System.Numerics;
+global using System.Runtime.CompilerServices;
+global using System.Threading;
+global using System.Threading.Tasks;
+global using MathVerse.Math.Geometry;
+global using MathVerse.Math.Geometry.Geometry2D;
+global using MathVerse.Math.Geometry.Geometry3D;
+global using MathVerse.Math.Geometry.Meshes;

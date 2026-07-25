@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Domain</RootNamespace>
+    <AssemblyName>MathVerse.Domain</AssemblyName>
+    <Description>MathVerse domain models</Description>
+    <PackageId>MathVerse.Domain</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

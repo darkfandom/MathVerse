@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MathVerse.Math.Optimization</RootNamespace>
+    <AssemblyName>MathVerse.Math.Optimization</AssemblyName>
+    <Description>MathVerse optimization algorithms</Description>
+    <PackageId>MathVerse.Math.Optimization</PackageId>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\Numerical\MathVerse.Math.Numerical.csproj" />
+    <ProjectReference Include="..\..\Kernel\MathVerse.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

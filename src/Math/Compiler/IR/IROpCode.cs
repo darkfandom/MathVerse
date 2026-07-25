@@ -1,0 +1,36 @@
+namespace MathVerse.Math.Compiler.IR;
+
+public enum IROpCode
+{
+    Nop,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    Neg,
+    Abs,
+    Fma,
+    Sqrt,
+    Sin,
+    Cos,
+    Tan,
+    Log,
+    Exp,
+    Pow,
+    Dot,
+    Sum,
+    Reshape,
+    Transpose,
+    MatMul,
+    Load,
+    Store,
+    Alloc,
+    Branch,
+    CondBranch,
+    Return,
+    Phi,
+    Call,
+    Cast,
+    VectorOp
+}
