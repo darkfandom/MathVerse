@@ -40,20 +40,6 @@
                             Tag="evaluate" Click="OnNavClick"/>
         <controls:NavButton x:Name="BtnGraph" Glyph="&#x223F;" Label="Graph Studio"
                             Tag="graph" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnVisualize" Glyph="&#x25CE;" Label="Visualize"
-                            Tag="visualize" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnGeometry" Glyph="&#x25B3;" Label="Geometry"
-                            Tag="geometry" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnSimulate" Glyph="&#x2697;" Label="Simulate"
-                            Tag="simulate" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnAnimate" Glyph="&#x25B6;" Label="Animate"
-                            Tag="animate" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnAi" Glyph="&#x2728;" Label="AI Assistant"
-                            Tag="ai" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnPublish" Glyph="&#x270E;" Label="Publish"
-                            Tag="publish" Click="OnNavClick"/>
-        <controls:NavButton x:Name="BtnData" Glyph="&#x2261;" Label="Data"
-                            Tag="data" Click="OnNavClick"/>
       </StackPanel>
     </ScrollViewer>
   </DockPanel>

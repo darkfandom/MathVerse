@@ -1,5 +1,7 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using MathVerse.Desktop.ViewModels;
 
 namespace MathVerse.Desktop.Views;
@@ -14,8 +16,10 @@ public partial class HomeView : UserControl
         var tag = control.Tag?.ToString();
         if (string.IsNullOrEmpty(tag)) return;
 
-        var workspace = DataContext as WorkspaceViewModel
-            ?? (VisualRoot as Control)?.DataContext as WorkspaceViewModel;
+        var workspace = this.GetLogicalAncestors()
+            .OfType<Control>()
+            .Select(c => c.DataContext as WorkspaceViewModel)
+            .FirstOrDefault(vm => vm != null);
         workspace?.NavigateCommand.Execute(tag);
     }
 }

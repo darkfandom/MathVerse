@@ -280,7 +280,9 @@
               <DataTemplate DataType="{x:Type vm:HistoryItem}">
                 <Border CornerRadius="6" Padding="10,7" Margin="4,2"
                         Background="{DynamicResource CanvasBrush}"
-                        Cursor="Hand">
+                        Cursor="Hand"
+                        Tag="{Binding}"
+                        Tapped="HistoryItem_Tapped">
                   <DockPanel>
                     <Border DockPanel.Dock="Bottom" Margin="0,5,0,0"
                             CornerRadius="3" Padding="6,2"
@@ -289,7 +291,7 @@
                                  Foreground="{DynamicResource AccentBlueBrush}"
                                  FontWeight="500" TextTrimming="CharacterEllipsis"/>
                     </Border>
-                    <Grid ColumnDefinitions="*,Auto">
+                    <Grid ColumnDefinitions="*,Auto,Auto">
                       <TextBlock Grid.Column="0" Text="{Binding Expression}"
                                  FontSize="11"
                                  Foreground="{DynamicResource TextPrimaryBrush}"
@@ -301,6 +303,11 @@
                         <TextBlock Text="{Binding Operation}" FontSize="9"
                                    Foreground="{DynamicResource TextTertiaryBrush}"/>
                       </Border>
+                      <TextBlock Grid.Column="2" Text="&#x2715;" FontSize="10"
+                                 Foreground="{DynamicResource TextTertiaryBrush}"
+                                 Cursor="Hand" Margin="6,0,0,0"
+                                 Tag="{Binding}"
+                                 Tapped="HistoryDelete_Tapped"/>
                     </Grid>
                   </DockPanel>
                 </Border>

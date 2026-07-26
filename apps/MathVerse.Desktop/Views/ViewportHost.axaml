@@ -16,27 +16,6 @@
       <DataTemplate DataType="{x:Type vm:GraphViewModel}">
         <views:GraphView/>
       </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:VisualizeViewModel}">
-        <views:VisualizeView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:GeometryViewModel}">
-        <views:GeometryView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:SimulateViewModel}">
-        <views:SimulateView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:AnimateViewModel}">
-        <views:AnimateView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:AiViewModel}">
-        <views:AiView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:PublishViewModel}">
-        <views:PublishView/>
-      </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:DataViewModel}">
-        <views:DataView/>
-      </DataTemplate>
       <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
         <views:SettingsView/>
       </DataTemplate>

@@ -26,13 +26,6 @@ public class App : Application
                 services.AddTransient<HomeViewModel>();
                 services.AddTransient<EvaluateViewModel>();
                 services.AddTransient<GraphViewModel>();
-                services.AddTransient<VisualizeViewModel>();
-                services.AddTransient<GeometryViewModel>();
-                services.AddTransient<SimulateViewModel>();
-                services.AddTransient<AnimateViewModel>();
-                services.AddTransient<AiViewModel>();
-                services.AddTransient<PublishViewModel>();
-                services.AddTransient<DataViewModel>();
                 services.AddTransient<SettingsViewModel>();
             })
             .Build();

@@ -172,6 +172,14 @@ public partial class GraphViewModel : ObservableObject
     [RelayCommand] private void ToggleGrid() => ShowGrid = !ShowGrid;
 
     [RelayCommand]
+    private void SetGraphColor(string? hexColor)
+    {
+        if (SelectedGraph == null || string.IsNullOrEmpty(hexColor)) return;
+        SelectedGraph.Color = hexColor;
+        RequestRender();
+    }
+
+    [RelayCommand]
     private void ToggleAnimation()
     {
         IsAnimating = !IsAnimating;

@@ -8,7 +8,8 @@
         Width="1400" Height="900"
         MinWidth="1024" MinHeight="768"
         Background="{DynamicResource CanvasBrush}"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
 
   <DockPanel>
 
@@ -18,6 +19,20 @@
             BorderBrush="{DynamicResource BorderBrush}"
             BorderThickness="0,0,0,1" Padding="16,0">
       <DockPanel>
+        <!-- Back / Forward -->
+        <StackPanel Orientation="Horizontal" Spacing="2"
+                    VerticalAlignment="Center" Margin="0,0,12,0">
+          <Button Content="&#x25C0;" Command="{Binding GoBackCommand}"
+                  IsEnabled="{Binding CanGoBack}"
+                  FontSize="11" Padding="6,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Button Content="&#x25B6;" Command="{Binding GoForwardCommand}"
+                  IsEnabled="{Binding CanGoForward}"
+                  FontSize="11" Padding="6,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+        </StackPanel>
         <TextBlock Text="{Binding CurrentTitle}" FontSize="13" FontWeight="500"
                    Foreground="{DynamicResource TextSecondaryBrush}"
                    VerticalAlignment="Center"/>
