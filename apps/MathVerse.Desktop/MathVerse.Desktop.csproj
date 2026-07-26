@@ -35,6 +35,8 @@
     <ProjectReference Include="..\..\src\Math\Numerics\MathVerse.Math.Numerics.csproj" />
     <ProjectReference Include="..\..\src\Math\Semantics\MathVerse.Math.Semantics.csproj" />
     <ProjectReference Include="..\..\src\Math\Foundation\MathVerse.Math.Foundation.csproj" />
+    <ProjectReference Include="..\..\src\Math\Geometry\MathVerse.Math.Geometry.csproj" />
+    <ProjectReference Include="..\..\src\Math\Visualization\MathVerse.Math.Visualization.csproj" />
   </ItemGroup>
 
 </Project>

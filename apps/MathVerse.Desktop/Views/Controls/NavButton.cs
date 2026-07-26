@@ -33,18 +33,27 @@ public partial class NavButton : Button
         set => SetValue(IsActiveProperty, value);
     }
 
+    private bool _templateLoaded;
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if (change.Property == IsActiveProperty)
+        if (change.Property == IsActiveProperty && _templateLoaded)
             UpdateVisuals();
     }
 
     private void UpdateVisuals()
     {
-        var border = this.FindControl<Border>("RootBorder");
-        var glyph = this.FindControl<TextBlock>("GlyphText");
-        var label = this.FindControl<TextBlock>("LabelText");
+        Border? border = null;
+        TextBlock? glyph = null;
+        TextBlock? label = null;
+        try
+        {
+            border = this.FindControl<Border>("RootBorder");
+            glyph = this.FindControl<TextBlock>("GlyphText");
+            label = this.FindControl<TextBlock>("LabelText");
+        }
+        catch { return; }
 
         if (IsActive)
         {
@@ -63,6 +72,7 @@ public partial class NavButton : Button
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+        _templateLoaded = true;
         UpdateVisuals();
     }
 

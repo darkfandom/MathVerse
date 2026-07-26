@@ -1,7 +1,8 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MathVerse.Desktop.Views.Controls.PageCard"
-             x:Name="Root">
+<Button xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MathVerse.Desktop.Views.Controls.PageCard"
+        x:Name="Root"
+        Background="Transparent" BorderThickness="0" Padding="0">
 
   <Border Background="{DynamicResource SurfaceBrush}"
           BorderBrush="{DynamicResource BorderBrush}"
@@ -16,4 +17,4 @@
     </StackPanel>
   </Border>
 
-</UserControl>
+</Button>
