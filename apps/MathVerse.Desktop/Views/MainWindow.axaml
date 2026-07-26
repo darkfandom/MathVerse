@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="using:MathVerse.Desktop.Views"
+        xmlns:converters="using:MathVerse.Desktop.Views"
         xmlns:vm="using:MathVerse.Desktop.ViewModels"
         x:Class="MathVerse.Desktop.Views.MainWindow"
         x:DataType="vm:WorkspaceViewModel"
@@ -13,74 +14,417 @@
 
   <DockPanel>
 
-    <!-- Top Toolbar -->
-    <Border DockPanel.Dock="Top" Height="44"
-            Background="{DynamicResource CanvasBrush}"
+    <!-- ═══ TOOLBAR ═══ -->
+    <Border DockPanel.Dock="Top" Height="40"
+            Background="{DynamicResource SurfaceBrush}"
             BorderBrush="{DynamicResource BorderBrush}"
-            BorderThickness="0,0,0,1" Padding="16,0">
+            BorderThickness="0,0,0,1" Padding="10,0">
       <DockPanel>
-        <!-- Back / Forward -->
+        <!-- Left: Graph actions -->
         <StackPanel Orientation="Horizontal" Spacing="2"
-                    VerticalAlignment="Center" Margin="0,0,12,0">
-          <Button Content="&#x25C0;" Command="{Binding GoBackCommand}"
-                  IsEnabled="{Binding CanGoBack}"
-                  FontSize="11" Padding="6,4" CornerRadius="4"
+                    VerticalAlignment="Center">
+          <Button Content="+ Graph" Command="{Binding Graph.AddGraphCommand}"
+                  FontSize="11" Padding="10,4" CornerRadius="4"
+                  Background="{DynamicResource AccentBlueBrush}"
+                  Foreground="#FFFFFF" FontWeight="500"/>
+          <Button Content="Clear" Command="{Binding ClearAllCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextTertiaryBrush}"/>
+          <Border Width="1" Height="18" Background="{DynamicResource BorderBrush}"
+                  Margin="6,0" VerticalAlignment="Center"/>
+          <Button Content="Zoom +" Command="{Binding Graph.ZoomInCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
                   Background="Transparent" BorderThickness="0"
                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-          <Button Content="&#x25B6;" Command="{Binding GoForwardCommand}"
-                  IsEnabled="{Binding CanGoForward}"
-                  FontSize="11" Padding="6,4" CornerRadius="4"
+          <Button Content="Zoom -" Command="{Binding Graph.ZoomOutCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
                   Background="Transparent" BorderThickness="0"
                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Button Content="Fit All" Command="{Binding Graph.FitAllCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Button Content="Home" Command="{Binding Graph.HomeCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Border Width="1" Height="18" Background="{DynamicResource BorderBrush}"
+                  Margin="6,0" VerticalAlignment="Center"/>
+          <Button Content="Grid" Command="{Binding Graph.ToggleGridCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Button Content="3D" Click="Toggle3D_Click"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="Transparent" BorderThickness="0"
+                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+          <Border Width="1" Height="18" Background="{DynamicResource BorderBrush}"
+                  Margin="6,0" VerticalAlignment="Center"/>
+          <Button Content="Export PNG" Command="{Binding Graph.ExportPngCommand}"
+                  FontSize="11" Padding="8,4" CornerRadius="4"
+                  Background="{DynamicResource AccentTealBrush}"
+                  Foreground="#FFFFFF"/>
         </StackPanel>
-        <TextBlock Text="{Binding CurrentTitle}" FontSize="13" FontWeight="500"
-                   Foreground="{DynamicResource TextSecondaryBrush}"
-                   VerticalAlignment="Center"/>
-        <StackPanel Orientation="Horizontal" Spacing="8"
-                    HorizontalAlignment="Right" VerticalAlignment="Center">
-          <Border Background="{DynamicResource SurfaceBrush}"
-                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                  CornerRadius="6" Padding="10,5" MinWidth="200">
-            <TextBlock Text="Search... (Ctrl+K)" FontSize="12"
+
+        <!-- Center: Expression bar -->
+        <Border Background="{DynamicResource CanvasBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                CornerRadius="6" Padding="8,3" Margin="16,0"
+                VerticalAlignment="Center" MinWidth="300" MaxWidth="500">
+          <DockPanel>
+            <TextBlock Text="ƒ" FontSize="13" FontWeight="700"
+                       Foreground="{DynamicResource AccentPurpleBrush}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBox Text="{Binding ExpressionInput}"
+                     Watermark="Type expression: sin(x), x^2, ..."
+                     FontFamily="Cascadia Code, Consolas, monospace"
+                     FontSize="12" MinHeight="24" Padding="4,2"
+                     Background="Transparent" BorderThickness="0"
+                     KeyDown="ExpressionInput_KeyDown"/>
+          </DockPanel>
+        </Border>
+
+        <!-- Right: Status -->
+        <TextBlock Text="{Binding StatusText}" FontSize="11"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   FontFamily="Cascadia Code, Consolas, monospace"/>
+      </DockPanel>
+    </Border>
+
+    <!-- ═══ BOTTOM: Console ═══ -->
+    <Border DockPanel.Dock="Bottom" Height="140"
+            Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,1,0,0">
+      <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="10,4"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <TextBlock Grid.Column="0" Text="Console" FontSize="10" FontWeight="600"
                        Foreground="{DynamicResource TextTertiaryBrush}"
                        VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding ConsoleLineCount, StringFormat='{}{0} lines'}"
+                       FontSize="10" Margin="8,0,0,0"
+                       Foreground="{DynamicResource TextTertiaryBrush}"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="2" Content="Clear" Command="{Binding ClearConsoleCommand}"
+                    FontSize="9" Padding="6,2" CornerRadius="3"
+                    Background="Transparent" BorderThickness="0"
+                    Foreground="{DynamicResource TextTertiaryBrush}" MinHeight="18"/>
+          </Grid>
+        </Border>
+        <ItemsControl ItemsSource="{Binding Console}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:ConsoleEntry}">
+              <Border Padding="10,2" Background="Transparent">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Border CornerRadius="3" Padding="4,1" MinWidth="60"
+                          HorizontalAlignment="Left"
+                          Background="{DynamicResource SurfaceElevatedBrush}">
+                    <TextBlock Text="{Binding Input}" FontSize="10"
+                               Foreground="{DynamicResource TextTertiaryBrush}"
+                               FontFamily="Cascadia Code, Consolas, monospace"
+                               TextTrimming="CharacterEllipsis"/>
+                  </Border>
+                  <TextBlock Text="{Binding Output}" FontSize="11"
+                             FontFamily="Cascadia Code, Consolas, monospace"
+                             TextWrapping="Wrap"
+                             Foreground="{Binding IsError, Converter={x:Static converters:ErrorToBrushConverter.Instance}}"/>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </DockPanel>
+    </Border>
+
+    <!-- ═══ MAIN: Explorer | Canvas | Inspector ═══ -->
+    <Grid ColumnDefinitions="220,*,280" RowDefinitions="*">
+
+      <!-- ═══ LEFT: Explorer ═══ -->
+      <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,1,0">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Padding="12,8"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <TextBlock Text="Explorer" FontSize="11" FontWeight="600"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
           </Border>
-        </StackPanel>
-      </DockPanel>
-    </Border>
 
-    <!-- Bottom Status Bar -->
-    <Border DockPanel.Dock="Bottom" Height="24"
-            Background="{DynamicResource CanvasBrush}"
-            BorderBrush="{DynamicResource BorderBrush}"
-            BorderThickness="0,1,0,0" Padding="12,0">
-      <DockPanel>
-        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-          <Border Background="{DynamicResource AccentTealBrush}" CornerRadius="4"
-                  Width="8" Height="8"/>
-          <TextBlock Text="Ready" FontSize="11"
-                     Foreground="{DynamicResource TextTertiaryBrush}"
-                     VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="16"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
-          <TextBlock Text="v0.6.0" FontSize="11"
-                     Foreground="{DynamicResource TextTertiaryBrush}"
-                     VerticalAlignment="Center"/>
-          <TextBlock Text="Backend: Online" FontSize="11"
-                     Foreground="{DynamicResource TextTertiaryBrush}"
-                     VerticalAlignment="Center"/>
-        </StackPanel>
-        <TextBlock Text="MathVerse" FontSize="11"
-                   Foreground="{DynamicResource TextTertiaryBrush}"
-                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
-      </DockPanel>
-    </Border>
+          <!-- Graphs Section -->
+          <Border DockPanel.Dock="Top" Padding="10,6"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <TextBlock Text="GRAPHS" FontSize="9" FontWeight="700"
+                       Foreground="{DynamicResource TextTertiaryBrush}" Opacity="0.7"/>
+          </Border>
 
-    <!-- Main Content: Sidebar + Viewport -->
-    <Grid ColumnDefinitions="200,*">
-      <views:Sidebar Grid.Column="0" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"/>
-      <views:ViewportHost Grid.Column="1" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"/>
+          <ScrollViewer>
+            <StackPanel>
+              <ItemsControl ItemsSource="{Binding Graph.Graphs}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type vm:GraphEntry}">
+                    <Border CornerRadius="4" Padding="8,5" Margin="4,1"
+                            Background="{DynamicResource CanvasBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1" Cursor="Hand"
+                            Tag="{Binding}"
+                            Tapped="ExplorerItem_Tapped">
+                      <DockPanel>
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                          <TextBlock Grid.Column="0" Text="&#x25CF;" FontSize="8"
+                                     Foreground="{Binding Color}"
+                                     VerticalAlignment="Center" Margin="0,0,6,0"/>
+                          <TextBlock Grid.Column="1" Text="{Binding Expression}"
+                                     FontSize="11" FontWeight="500"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     TextTrimming="CharacterEllipsis"
+                                     VerticalAlignment="Center"/>
+                          <Border Grid.Column="2" CornerRadius="2" Padding="3,1"
+                                  Background="{DynamicResource SurfaceElevatedBrush}"
+                                  Margin="4,0" IsVisible="{Binding IsSelected}">
+                            <TextBlock Text="&#x2713;" FontSize="8"
+                                       Foreground="{DynamicResource AccentTealBrush}"/>
+                          </Border>
+                          <TextBlock Grid.Column="3" Text="&#x2715;" FontSize="9"
+                                     Foreground="{DynamicResource TextTertiaryBrush}"
+                                     Cursor="Hand" Margin="4,0,0,0"
+                                     Tag="{Binding}"
+                                     Tapped="ExplorerDelete_Tapped"/>
+                        </Grid>
+                      </DockPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Empty state -->
+              <TextBlock Text="No graphs yet" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}"
+                         HorizontalAlignment="Center" Margin="0,20,0,0"
+                         IsVisible="{Binding !Graph.Graphs.Count}"/>
+            </StackPanel>
+          </ScrollViewer>
+
+          <!-- History Section -->
+          <Border DockPanel.Dock="Bottom" Padding="10,6"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+            <StackPanel>
+              <TextBlock Text="RECENT" FontSize="9" FontWeight="700"
+                         Foreground="{DynamicResource TextTertiaryBrush}" Opacity="0.7"
+                         Margin="0,0,0,4"/>
+              <ScrollViewer MaxHeight="120">
+                <ItemsControl ItemsSource="{Binding ExpressionHistory}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="x:String">
+                      <TextBlock Text="{Binding}" FontSize="10"
+                                 FontFamily="Cascadia Code, Consolas, monospace"
+                                 Foreground="{DynamicResource TextSecondaryBrush}"
+                                 Cursor="Hand" Padding="4,2"
+                                 Tag="{Binding}"
+                                 Tapped="HistoryItem_Tapped"/>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </StackPanel>
+          </Border>
+        </DockPanel>
+      </Border>
+
+      <!-- ═══ CENTER: Graph Canvas ═══ -->
+      <Grid Grid.Column="1" RowDefinitions="*,Auto">
+        <views:GraphView Grid.Row="0" DataContext="{Binding Graph}"
+                        Margin="0"/>
+      </Grid>
+
+      <!-- ═══ RIGHT: Inspector ═══ -->
+      <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1,0,0,0">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Padding="12,8"
+                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <TextBlock Text="Inspector" FontSize="11" FontWeight="600"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+          </Border>
+
+          <ScrollViewer>
+            <StackPanel Margin="12,8">
+
+              <!-- No Selection -->
+              <TextBlock Text="Select a graph to edit properties"
+                         FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}"
+                         IsVisible="{Binding !Graph.SelectedGraph}"
+                         Margin="0,20,0,0" TextWrapping="Wrap"/>
+
+              <!-- Selected Graph Properties -->
+              <StackPanel IsVisible="{Binding Graph.SelectedGraph}" Spacing="10">
+
+                <!-- Expression -->
+                <TextBlock Text="EXPRESSION" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <TextBox Text="{Binding Graph.SelectedGraph.Expression}"
+                         FontFamily="Cascadia Code, Consolas, monospace"
+                         FontSize="12" CornerRadius="4" Padding="6,4" MinHeight="28"
+                         Watermark="Expression"/>
+
+                <!-- Type -->
+                <TextBlock Text="TYPE" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <TextBlock Text="{Binding Graph.SelectedGraph.Type}" FontSize="11"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                <!-- Color -->
+                <TextBlock Text="COLOR" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <WrapPanel>
+                  <Button Background="#4A9EFF" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#4A9EFF"/>
+                  <Button Background="#8B5CF6" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#8B5CF6"/>
+                  <Button Background="#06D6A0" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#06D6A0"/>
+                  <Button Background="#FF6B35" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#FF6B35"/>
+                  <Button Background="#FF4444" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#FF4444"/>
+                  <Button Background="#FFD700" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#FFD700"/>
+                  <Button Background="#E879F9" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#E879F9"/>
+                  <Button Background="#22D3EE" Width="20" Height="20" CornerRadius="10"
+                          Margin="2" Command="{Binding Graph.SetGraphColorCommand}"
+                          CommandParameter="#22D3EE"/>
+                </WrapPanel>
+
+                <!-- Line Width -->
+                <TextBlock Text="LINE WIDTH" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <Slider Minimum="0.5" Maximum="5"
+                        Value="{Binding Graph.SelectedGraph.LineWidth}"/>
+
+                <!-- Domain -->
+                <TextBlock Text="DOMAIN" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
+                  <TextBlock Grid.Column="0" Text="X:" FontSize="10" Margin="0,0,4,0"
+                             Foreground="{DynamicResource TextTertiaryBrush}"
+                             VerticalAlignment="Center"/>
+                  <TextBox Grid.Column="1" Text="{Binding Graph.SelectedGraph.XMin}" FontSize="11"
+                           CornerRadius="3" Padding="4,2" MinHeight="22"/>
+                  <TextBlock Grid.Column="2" Text="-" FontSize="10" Margin="4,0"
+                             Foreground="{DynamicResource TextTertiaryBrush}"
+                             VerticalAlignment="Center"/>
+                  <TextBox Grid.Column="3" Text="{Binding Graph.SelectedGraph.XMax}" FontSize="11"
+                           CornerRadius="3" Padding="4,2" MinHeight="22"/>
+                  <TextBlock Grid.Column="0" Grid.Row="1" Text="Y:" FontSize="10" Margin="0,0,4,0"
+                             Foreground="{DynamicResource TextTertiaryBrush}"
+                             VerticalAlignment="Center"/>
+                  <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Graph.SelectedGraph.YMin}" FontSize="11"
+                           CornerRadius="3" Padding="4,2" MinHeight="22"/>
+                  <TextBlock Grid.Column="2" Grid.Row="1" Text="-" FontSize="10" Margin="4,0"
+                             Foreground="{DynamicResource TextTertiaryBrush}"
+                             VerticalAlignment="Center"/>
+                  <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Graph.SelectedGraph.YMax}" FontSize="11"
+                           CornerRadius="3" Padding="4,2" MinHeight="22"/>
+                </Grid>
+
+                <!-- Options -->
+                <TextBlock Text="OPTIONS" FontSize="9" FontWeight="700"
+                           Foreground="{DynamicResource TextTertiaryBrush}"/>
+                <CheckBox Content="Show Fill" IsChecked="{Binding Graph.SelectedGraph.ShowFill}"
+                          FontSize="11"/>
+                <CheckBox Content="Show Grid" IsChecked="{Binding Graph.SelectedGraph.ShowGrid}"
+                          FontSize="11"/>
+
+                <!-- Parameter Sliders -->
+                <ItemsControl ItemsSource="{Binding Graph.SelectedGraph.ParameterSliders}"
+                              Margin="0,8,0,0">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ParameterSlider}">
+                      <StackPanel Margin="0,4">
+                        <Grid ColumnDefinitions="*,Auto">
+                          <TextBlock Grid.Column="0" Text="{Binding Name}"
+                                     FontSize="11" FontWeight="500"
+                                     Foreground="{DynamicResource AccentTealBrush}"
+                                     VerticalAlignment="Center"/>
+                          <TextBlock Grid.Column="1" Text="{Binding Value, StringFormat='{}{0:F2}'}"
+                                     FontSize="11"
+                                     Foreground="{DynamicResource TextSecondaryBrush}"
+                                     FontFamily="Cascadia Code, Consolas, monospace"
+                                     VerticalAlignment="Center"/>
+                        </Grid>
+                        <Slider Minimum="{Binding Min}" Maximum="{Binding Max}"
+                                Value="{Binding Value}"
+                                Margin="0,2,0,0"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Delete button -->
+                <Button Content="Remove Graph"
+                        Command="{Binding Graph.RemoveGraphCommand}"
+                        CommandParameter="{Binding Graph.SelectedGraph}"
+                        FontSize="11" Padding="8,4" CornerRadius="4" Margin="0,8,0,0"
+                        Background="{DynamicResource AccentRedBrush}"
+                        Foreground="#FFFFFF"/>
+              </StackPanel>
+
+              <!-- Quick Presets (always visible) -->
+              <Border Margin="0,16,0,0"
+                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
+                      Padding="0,10,0,0">
+                <StackPanel>
+                  <TextBlock Text="QUICK ADD" FontSize="9" FontWeight="700"
+                             Foreground="{DynamicResource TextTertiaryBrush}" Margin="0,0,0,6"/>
+                  <WrapPanel>
+                    <Button Content="sin(x)" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="sin(x)" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <Button Content="x^2" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="x^2" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <Button Content="cos(x)" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="cos(x)" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <Button Content="e^x" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="exp(x)" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <Button Content="ln(x)" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="ln(x)" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <Button Content="1/x" Command="{Binding Graph.AddPresetExampleCommand}"
+                            CommandParameter="1/x" Margin="0,0,4,4"
+                            FontSize="10" Padding="8,3" CornerRadius="4"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+                  </WrapPanel>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+
     </Grid>
 
   </DockPanel>

@@ -15,9 +15,7 @@ using MathVerse.Math.CAS.Evaluation;
 using MathVerse.Math.Core;
 using MathVerse.Math.Expressions;
 using MathVerse.Math.Parsing;
-using MathVerse.Math.Visualization._2DPlotting;
 using MathVerse.Math.Visualization.Export;
-using MathVerse.Math.Visualization.FunctionVisualization;
 
 namespace MathVerse.Desktop.ViewModels;
 
@@ -30,25 +28,18 @@ public partial class GraphViewModel : ObservableObject
     [ObservableProperty] private double _cameraAzimuth = 45;
     [ObservableProperty] private double _cameraElevation = 30;
     [ObservableProperty] private double _cameraDistance = 15;
-
     [ObservableProperty] private bool _showGrid = true;
-    [ObservableProperty] private bool _showAxes = true;
     [ObservableProperty] private bool _showLabels = true;
-
     [ObservableProperty] private string _statusText = "Ready";
-    [ObservableProperty] private string _cursorCoords = string.Empty;
     [ObservableProperty] private string _hoverCoords = string.Empty;
-
     [ObservableProperty] private bool _isAnimating;
     [ObservableProperty] private double _currentTime;
     [ObservableProperty] private double _animationSpeed = 1.0;
     [ObservableProperty] private bool _loopAnimation = true;
     [ObservableProperty] private int _fps = 60;
     [ObservableProperty] private double _animationDuration = 10;
-
     [ObservableProperty] private GraphEntry? _selectedGraph;
     [ObservableProperty] private Bitmap? _viewportBitmap;
-
     [ObservableProperty] private string _newExpression = string.Empty;
     [ObservableProperty] private int _selectedGraphTypeIndex;
 
@@ -70,7 +61,6 @@ public partial class GraphViewModel : ObservableObject
     partial void OnViewportCenterXChanged(double value) => RequestRender();
     partial void OnViewportCenterYChanged(double value) => RequestRender();
     partial void OnShowGridChanged(bool value) => RequestRender();
-    partial void OnShowAxesChanged(bool value) => RequestRender();
 
     partial void OnSelectedGraphChanged(GraphEntry? value)
     {

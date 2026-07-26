@@ -22,11 +22,8 @@ public class App : Application
         _appHost = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
+                services.AddSingleton<GraphViewModel>();
                 services.AddSingleton<WorkspaceViewModel>();
-                services.AddTransient<HomeViewModel>();
-                services.AddTransient<EvaluateViewModel>();
-                services.AddTransient<GraphViewModel>();
-                services.AddTransient<SettingsViewModel>();
             })
             .Build();
 

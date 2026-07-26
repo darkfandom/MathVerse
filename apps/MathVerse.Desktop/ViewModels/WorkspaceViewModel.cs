@@ -1,96 +1,94 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MathVerse.Math.CAS.Evaluation;
+using MathVerse.Math.Core;
+using MathVerse.Math.Expressions;
+using MathVerse.Math.Parsing;
 
 namespace MathVerse.Desktop.ViewModels;
 
 public partial class WorkspaceViewModel : ObservableObject
 {
-    [ObservableProperty] private ObservableObject _currentPage;
-    [ObservableProperty] private string _currentTitle = "Home";
-    [ObservableProperty] private string _currentPageName = "home";
-    [ObservableProperty] private bool _canGoBack;
-    [ObservableProperty] private bool _canGoForward;
-
-    private readonly List<string> _backStack = new();
-    private readonly List<string> _forwardStack = new();
-    private bool _isNavigating;
-
-    public HomeViewModel Home { get; }
-    public EvaluateViewModel Evaluate { get; }
     public GraphViewModel Graph { get; }
-    public SettingsViewModel Settings { get; }
+    public ObservableCollection<ConsoleEntry> Console { get; } = new();
+    public ObservableCollection<string> ExpressionHistory { get; } = new();
 
-    public WorkspaceViewModel(
-        HomeViewModel home,
-        EvaluateViewModel evaluate,
-        GraphViewModel graph,
-        SettingsViewModel settings)
+    [ObservableProperty] private string _expressionInput = string.Empty;
+    [ObservableProperty] private string _statusText = "Ready";
+    [ObservableProperty] private int _consoleLineCount;
+
+    public WorkspaceViewModel(GraphViewModel graph)
     {
-        Home = home;
-        Evaluate = evaluate;
         Graph = graph;
-        Settings = settings;
-        _currentPage = home;
     }
 
     [RelayCommand]
-    private void Navigate(string page)
+    private void QuickEvaluate()
     {
-        if (_isNavigating) return;
-        if (page == CurrentPageName) return;
+        var expr = ExpressionInput?.Trim();
+        if (string.IsNullOrEmpty(expr)) return;
 
-        _isNavigating = true;
-        _backStack.Add(CurrentPageName);
-        _forwardStack.Clear();
-        SetPage(page);
-        _isNavigating = false;
-    }
+        ExpressionHistory.Insert(0, expr);
+        if (ExpressionHistory.Count > 50) ExpressionHistory.RemoveAt(ExpressionHistory.Count - 1);
 
-    [RelayCommand]
-    private void GoBack()
-    {
-        if (_backStack.Count == 0) return;
-        _isNavigating = true;
-        _forwardStack.Add(CurrentPageName);
-        var page = _backStack[^1];
-        _backStack.RemoveAt(_backStack.Count - 1);
-        SetPage(page);
-        _isNavigating = false;
-    }
-
-    [RelayCommand]
-    private void GoForward()
-    {
-        if (_forwardStack.Count == 0) return;
-        _isNavigating = true;
-        _backStack.Add(CurrentPageName);
-        var page = _forwardStack[^1];
-        _forwardStack.RemoveAt(_forwardStack.Count - 1);
-        SetPage(page);
-        _isNavigating = false;
-    }
-
-    private void SetPage(string page)
-    {
-        CurrentPageName = page;
-        switch (page)
+        try
         {
-            case "home": CurrentPage = Home; CurrentTitle = "Home"; break;
-            case "evaluate": CurrentPage = Evaluate; CurrentTitle = "Evaluate"; break;
-            case "graph": CurrentPage = Graph; CurrentTitle = "Graph Studio"; break;
-            case "settings": CurrentPage = Settings; CurrentTitle = "Settings"; break;
-            default: CurrentPage = Home; CurrentTitle = "Home"; break;
+            var parsed = ParsingFacade.ParseExpression(expr);
+            var vars = ImmutableDictionary<string, double>.Empty;
+            foreach (var v in parsed.Variables())
+            {
+                if (v == "pi") vars = vars.Add(v, System.Math.PI);
+                else if (v == "e") vars = vars.Add(v, System.Math.E);
+            }
+            var result = Evaluator.Instance.Evaluate(parsed, vars);
+            var display = result.Result.ToString();
+            Console.Add(new ConsoleEntry(expr, display, false));
+            StatusText = display;
         }
-        CanGoBack = _backStack.Count > 0;
-        CanGoForward = _forwardStack.Count > 0;
+        catch (Exception ex)
+        {
+            Console.Add(new ConsoleEntry(expr, ex.Message, true));
+            StatusText = "Error";
+        }
+
+        ConsoleLineCount = Console.Count;
     }
 
-    public void ClearHistory()
+    [RelayCommand]
+    private void AddGraphFromExpression()
     {
-        _backStack.Clear();
-        _forwardStack.Clear();
-        CanGoBack = false;
-        CanGoForward = false;
+        var expr = ExpressionInput?.Trim();
+        if (string.IsNullOrEmpty(expr)) return;
+
+        Graph.NewExpression = expr;
+        Graph.SelectedGraphTypeIndex = 0;
+        Graph.AddGraphCommand.Execute(null);
+        ExpressionInput = string.Empty;
+        Console.Add(new ConsoleEntry("graph", $"Added: {expr}", false));
+        ConsoleLineCount = Console.Count;
+    }
+
+    [RelayCommand]
+    private void ClearConsole()
+    {
+        Console.Clear();
+        ConsoleLineCount = 0;
+    }
+
+    [RelayCommand]
+    private void ClearAll()
+    {
+        Graph.ClearGraphsCommand.Execute(null);
+        Console.Clear();
+        ExpressionHistory.Clear();
+        ConsoleLineCount = 0;
+        ExpressionInput = string.Empty;
+        StatusText = "Cleared";
     }
 }
+
+public sealed record ConsoleEntry(string Input, string Output, bool IsError);

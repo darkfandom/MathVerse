@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using MathVerse.Desktop.ViewModels;
 
@@ -21,7 +22,7 @@ public partial class GraphView : UserControl
         Loaded += OnLoaded;
     }
 
-    private void OnLoaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         if (DataContext is GraphViewModel vm)
         {
@@ -32,6 +33,15 @@ public partial class GraphView : UserControl
             };
             SyncAnimationTimer(vm);
         }
+
+        if (DataContext is GraphViewModel vmSize)
+        {
+            SizeChanged += (_, _) =>
+            {
+                var bounds = Bounds;
+                vmSize.UpdateViewportSize((int)bounds.Width, (int)bounds.Height);
+            };
+        }
     }
 
     private void SyncAnimationTimer(GraphViewModel vm)
@@ -40,10 +50,7 @@ public partial class GraphView : UserControl
         {
             if (_animationTimer == null)
             {
-                _animationTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(16)
-                };
+                _animationTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
                 _animationTimer.Tick += AnimationTimer_Tick;
             }
             _lastTick = DateTime.UtcNow;
@@ -65,21 +72,6 @@ public partial class GraphView : UserControl
     }
 
     private GraphViewModel? Vm => DataContext as GraphViewModel;
-
-    private void ExpressionInput_KeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter && Vm != null)
-        {
-            Vm.AddGraphCommand.Execute(null);
-            e.Handled = true;
-        }
-    }
-
-    private void DeleteGraph_DoubleTapped(object? sender, TappedEventArgs e)
-    {
-        if (sender is TextBlock tb && tb.Tag is GraphEntry entry && Vm != null)
-            Vm.RemoveGraphCommand.Execute(entry);
-    }
 
     private void ViewportImage_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
@@ -130,12 +122,6 @@ public partial class GraphView : UserControl
     private void ViewportImage_DoubleTapped(object? sender, TappedEventArgs e)
     {
         Vm?.HomeCommand.Execute(null);
-    }
-
-    private void Toggle3D_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (Vm == null) return;
-        Vm.Is3D = !Vm.Is3D;
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
