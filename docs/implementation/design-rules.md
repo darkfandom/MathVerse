@@ -1,325 +1,209 @@
-# MathVerse Design Rules
+# MathVerse — Mandatory Design Rules
 
-## Permanent UI Rules
-
-These rules are immutable. Every screen, every component, every interaction must follow them. They derive directly from the vision board and the product philosophy.
+These rules are immutable. Prepend them to every prompt. If any implementation violates these rules, reject it and redesign.
 
 ---
 
-## 1. Layout Hierarchy
+## Rule 1: MathVerse Is NOT a Website
 
-**Maximum 3 levels of visual hierarchy on any screen.**
+MathVerse is NOT a calculator.
+MathVerse is NOT a website.
+MathVerse is NOT a collection of pages.
+MathVerse is NOT a ribbon application.
+MathVerse is NOT a dashboard.
 
-| Level | Example | Purpose |
-|-------|---------|---------|
-| 1 | Page title, main content | What am I looking at? |
-| 2 | Panels, sections, cards | What are the parts? |
-| 3 | Controls, labels, values | What can I do? |
+MathVerse is a professional desktop application.
 
-If a screen requires a 4th level, the layout is too complex. Flatten it.
-
----
-
-## 2. One Primary Action Per Page
-
-Every page has exactly one primary action — the thing the user is most likely to do.
-
-| Page | Primary Action |
-|------|---------------|
-| Home | Open a module or continue a project |
-| Evaluate | Type and evaluate an expression |
-| Graph Studio | Plot a function |
-| Visualization Studio | Load or create a visualization |
-| Geometry Studio | Create a geometric object |
-| Simulation Lab | Run a simulation |
-| AI Assistant | Ask a question |
-| Data Analysis | Import or create a dataset |
-| Publications | Create a new publication |
-| Settings | Adjust a setting |
-
-Secondary actions exist but are visually subordinate.
+Think Blender.
+Think Unreal Engine.
+Think Maya.
+Think Fusion 360.
+Think Adobe Photoshop.
+Think VS Code.
+Think MATLAB Desktop.
+Think Mathematica Notebook.
 
 ---
 
-## 3. Maximum 3 Clicks to Any Function
+## Rule 2: The Application Opens ONCE
 
-Every user-facing function must be reachable within 3 clicks from any screen:
-
-- **Click 1**: Navigate to the relevant page (sidebar)
-- **Click 2**: Open the relevant panel or tool
-- **Click 3**: Execute the action
-
-If a function requires more than 3 clicks, the information architecture is wrong.
-
----
-
-## 4. No Dead Buttons
-
-If a button exists, it must do something. Specifically:
-
-- Every button must have a working click handler
-- Every button must have a visible hover state
-- Every button must have a visible pressed state
-- Every button must have a tooltip if its purpose isn't self-evident from its icon/label
-- Disabled buttons must show why they're disabled (tooltip or inline message)
-- No button may navigate to a placeholder page without disclosure
+The application opens ONCE.
+The window never changes.
+The viewport never changes.
+Objects change.
+Panels change.
+Selection changes.
+Tools change.
+The workspace changes.
 
 ---
 
-## 5. No Hidden Functionality
+## Rule 3: Pages DO NOT Exist
 
-All major functions must be discoverable through the UI without documentation:
+Pages DO NOT exist.
+Navigation between pages does NOT exist.
+Every feature integrates into the persistent workspace.
 
-- Visible in panels, toolbars, or context menus
-- Reachable via keyboard shortcuts (shown in tooltips)
-- Present in the navigation sidebar if it's a top-level feature
-- Present in a toolbar if it's a page-level action
-- Present in a context menu if it's an object-level action
+If any implementation introduces:
+- Page navigation
+- UserControls that replace the viewport
+- Page lifecycle management
+- ContentControl page swapping
+- Frame navigation
+- Tabbed page application
+- Wizard-style UI
+- Anything resembling a website
 
-No feature may exist only as a keyboard shortcut with no visible trigger.
-
----
-
-## 6. No Command Palette as Primary Interaction
-
-Keyboard-driven command palettes are acceptable as a power-user accelerator (Ctrl+K search), but must never be the primary way to discover or access features.
-
-Every function accessible via command palette must also be accessible via visible UI elements.
+**Reject that implementation and redesign it.**
 
 ---
 
-## 7. One Toolbar Per Page
+## Rule 4: Everything Is an Object
 
-Each page may have at most one toolbar, positioned at the top of the page content area (below the global navigation bar).
+The workspace contains objects, not pages.
 
-The toolbar contains:
-- Page title (left)
-- Primary action button(s) (right)
-- Context-specific toggles or filters (center, if needed)
+Examples:
+- Expression
+- Graph
+- Surface
+- Geometry
+- Simulation
+- Animation
+- Dataset
+- Notebook
+- Publication
+- Camera
+- Image
+- Mesh
+- Scene
 
-Multiple toolbars, floating toolbars, and stacked toolbars are prohibited.
-
----
-
-## 8. Consistent Spacing
-
-Use the spacing scale from the vision board exclusively:
-
-| Token | Value | When to Use |
-|-------|-------|-------------|
-| `--space-1` | 4px | Inline element gaps |
-| `--space-2` | 8px | Tight grouping (icon + label) |
-| `--space-3` | 12px | Form field gaps |
-| `--space-4` | 16px | Card padding, list item gaps |
-| `--space-5` | 20px | Section internal spacing |
-| `--space-6` | 24px | Panel padding |
-| `--space-8` | 32px | Page margin, major sections |
-| `--space-10` | 40px | Hero sections |
-| `--space-12` | 48px | Maximum spacing |
-
-Never use arbitrary pixel values. Never use `margin: 13px` or `gap: 7px`.
+Objects remain alive until deleted.
+Objects have: ID, Name, Visibility, Selection, Properties, History, Tags, Serialization.
 
 ---
 
-## 9. Consistent Border Radius
+## Rule 5: Selection Drives Everything
 
-| Element | Radius |
-|---------|--------|
-| Buttons, inputs | `--radius-sm` (6px) |
-| Cards, panels | `--radius-md` (8px) |
-| Modals, large cards | `--radius-lg` (12px) |
-| Feature cards (Home) | `--radius-xl` (16px) |
-| Pills, avatars | `--radius-full` (9999px) |
+Selection is a first-class citizen.
 
-All corners of the same element type use the same radius. Mixed radii (e.g., 8px top, 4px bottom) are prohibited unless for a specific design pattern like notch/chip.
+The Inspector shows properties of the selected object.
+The Viewport highlights the selected object.
+The Explorer highlights the selected object.
+Context menus apply to the selected object.
 
----
-
-## 10. Color Palette Compliance
-
-Only colors from the vision board palette may be used:
-
-### Backgrounds
-- `#0B0B12` — Canvas
-- `#12121E` — Surface
-- `#1A1A2E` — Surface Elevated
-- `#080810` — Viewport (3D)
-- `#0E0E18` — Side panels
-- `#0B0B14` — Timeline
-
-### Borders
-- `#2A2A3E` — Default border
-- `rgba(255,255,255,0.06)` — Glass border
-- `rgba(255,255,255,0.04)` — Subtle separator
-
-### Text
-- `#E8E8F0` — Primary
-- `#7A7A96` — Secondary
-- `#4A4A64` — Tertiary
-
-### Accents
-- `#4A9EFF` — Blue (primary action, math objects)
-- `#8B5CF6` — Purple (AI, tensor fields)
-- `#06D6A0` — Teal (success, geometry)
-- `#FF6B35` — Orange (warnings, simulations)
-- `#FF4444` — Red (errors, destructive)
-- `#FFD700` — Gold (derivatives, highlights)
-
-No other colors. No custom brand colors. No theme-dependent palettes. The dark theme is the only theme.
+Everything depends on selection.
 
 ---
 
-## 11. Typography Scale Compliance
+## Rule 6: Panels Never Own Data
 
-Use only the defined type roles:
+Panels are views.
+Objects own data.
+Workspace owns objects.
 
-| Role | Size | Weight | Font |
-|------|------|--------|------|
-| Display | 32px | 300 | Inter |
-| H1 | 28px | 300 | Inter |
-| H2 | 20px | 500 | Inter |
-| H3 | 16px | 600 | Inter |
-| Body | 14px | 400 | Inter |
-| Caption | 12px | 400 | Inter |
-| Small | 11px | 400 | Inter |
-| Mono | 12px | 400 | JetBrains Mono / Consolas |
-
-Never use font sizes outside this scale. Never use non-Inter fonts for UI text.
+This distinction must never be broken.
 
 ---
 
-## 12. Icon Consistency
+## Rule 7: No ViewModel Knows Another ViewModel
 
-- All icons use 1.5px stroke weight
-- All icons use round line caps and joins
-- Sidebar icons: 20px
-- Button icons: 16px
-- Inline icons: 14px
-- Icon color always inherits from parent text color
-- No filled icons unless representing an active/selected state
+Never.
 
----
+Everything goes:
+```
+Workspace
+    ↓
+EventBus
+    ↓
+Panels
+```
 
-## 13. Glassmorphism Rules
-
-Glassmorphism is used for:
-- Floating panels over 3D viewports
-- Search results dropdown
-- Context menus
-- Tooltips with rich content
-
-Glassmorphism is NOT used for:
-- Sidebars
-- Main content areas
-- Cards in lists
-- Form elements
-
-Standard glass:
-```css
-background: rgba(14, 14, 24, 0.85);
-backdrop-filter: blur(20px);
-border: 1px solid rgba(255, 255, 255, 0.06);
-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+Never:
+```
+InspectorViewModel
+    ↓
+GraphViewModel
 ```
 
 ---
 
-## 14. Status Indicators
+## Rule 8: Every Visible Control Performs a Real Action
 
-Every long-running operation must show status:
-
-| Status | Visual |
-|--------|--------|
-| Ready | Green dot + "Ready" in status bar |
-| Loading | Spinner + "Loading..." in the relevant area |
-| Processing | Progress bar or percentage |
-| Error | Red banner with description and retry button |
-| Success | Teal checkmark, auto-dismiss after 3s |
-| Warning | Orange triangle with description |
+If a button exists, it must do something.
+If a control exists, it must be wired to a real backend operation.
+If a feature is unfinished, hide it. Do not expose dead controls.
+No placeholder text. No placeholder buttons. No dead controls.
 
 ---
 
-## 15. Empty States
+## Rule 9: The Backend Is Complete
 
-Every page with dynamic content must have a designed empty state:
+Do NOT modify the backend.
+Do NOT rewrite the mathematical engine.
+Do NOT redesign the CAS.
+Do NOT replace renderers.
+Do NOT touch parsing, evaluation, differentiation, integration, simplification, equation solving, geometry, visualization, simulation, animation, or export.
 
-- **Illustration**: Subtle, abstract, non-distracting (line art or geometric)
-- **Title**: What this page does (1 sentence)
-- **Description**: How to get started (1-2 sentences)
-- **Primary action**: Button to create the first item
-- **No content**: Never show a blank white/dark area
-
----
-
-## 16. Error States
-
-Every operation that can fail must have a designed error state:
-
-- **Inline error**: Below the failing control, red text, specific message
-- **Page error**: Centered, icon + title + description + retry button
-- **Toast notification**: Non-blocking, auto-dismiss after 5s, with action button
-- **Never**: Raw exception messages, stack traces, or debug output
+Only the frontend is under discussion.
 
 ---
 
-## 17. Loading States
+## Rule 10: Professional Desktop Software Patterns
 
-Every data-fetching or computation must show loading:
+The application should feel like:
+- Blender (layout, tools, undo, object hierarchy)
+- Unreal Engine (viewport, outliner, details panel)
+- Adobe After Effects (timeline, composition, properties)
+- Visual Studio (command palette, keyboard workflow)
+- MATLAB Desktop (workspace, command window, editor)
+- Mathematica Notebook (expression-driven, computational)
 
-- **Skeleton screens**: Preferred for content areas (gray pulsing placeholders)
-- **Spinners**: For buttons and small operations
-- **Progress bars**: For operations > 2 seconds with known duration
-- **Never**: Blank screens with no feedback
-
----
-
-## 18. Responsive Behavior
-
-| Width | Behavior |
-|-------|----------|
-| ≥ 1400px | Full layout with all panels visible |
-| 1000-1399px | Side panels collapse to overlays |
-| < 1000px | Side panels hidden, hamburger menu |
-
-This applies to the application window, not web responsive design. The minimum supported window size is 1024x768.
+NOT like:
+- A website
+- An MVVM sample
+- A dashboard
+- A page application
+- A mobile app
+- A calculator
 
 ---
 
-## 19. No IDE Patterns
+## Rule 11: The Workspace Is Permanent
 
-The following patterns are explicitly forbidden:
+No feature may create a new application window, page, or workflow.
 
-- Solution explorer / file tree as primary navigation
-- Tab-based document interface (like VS Code tabs)
-- Terminal / console panel
-- Debug console
-- Output window
-- IntelliSense / autocomplete popups as primary interaction
-- Property grid (like Visual Studio Properties window)
-- Error list / task list panel
-- Find and replace dialog as primary search
+Every capability must integrate into the existing Workspace.
+
+The Workspace is permanent. Objects are temporary. Panels are dynamic. Tools are interchangeable.
+
+Pages do not exist.
 
 ---
 
-## 20. Card Design Standard
+## Rule 12: Never Implement a Feature — Implement a System
 
-All cards follow this template:
+Features are built from systems. Systems produce features.
 
-```
-┌────────────────────────────────┐
-│  [Icon]  Title                  │
-│          Subtitle               │
-│                                 │
-│          Description text       │
-│          that may span two      │
-│          lines maximum          │
-│                                 │
-└────────────────────────────────┘
-```
+Don't build "Graph Studio." Build:
+- Expression Object → Graph Object → Renderer → Inspector → Viewport
 
-- Padding: 20px
-- Border radius: 16px (feature cards) or 12px (list cards)
-- Border: `1px solid #2A2A3E`
-- Background: `#12121E`
-- Hover: `translateY(-2px)`, shadow elevation, border glow
-- Click: `scale(0.98)` for 100ms
+Then Surface, Contour, Heatmap, Parametric, Vector Field become almost free.
+
+Don't build "Evaluate Page." Build:
+- Expression Object → ExpressionCompiler → Console → Inspector
+
+Then Simplify, Factor, Expand, Differentiate become almost free.
+
+Systems compose. Features don't.
+
+---
+
+## Rule 13: Build an Editor, Not a Viewer
+
+Most AI code generators accidentally build a Viewer with buttons and graphs.
+
+MathVerse is an Editor with objects, tools, and a workspace.
+
+Blender is an editor. Unreal Engine is an editor. Visual Studio is an editor. CAD applications are editors.
+
+MathVerse is an editor for mathematical objects.

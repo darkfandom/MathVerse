@@ -1,370 +1,600 @@
-# MathVerse Implementation Roadmap
+# MathVerse Desktop — Implementation Roadmap
+
+> **Architecture:** `docs/architecture.md`
+> **Design Rules:** `docs/implementation/design-rules.md`
+> **Status:** Ready for implementation
+> **Internal Naming:** Application Core (not "Workspace Kernel")
+> **Version:** v1.0 (Frozen)
+
+> **Architecture:** 26 sections, ~1,400 lines
+> **Design Rules:** 13 mandatory rules
+> **Phases:** 15 phases, 35 milestones
+> **Current Phase:** 1 — Application Core
+
+---
 
 ## Development Strategy
 
-**Screen-by-screen. One page at a time.**
+**Incremental, compile-gated milestones.**
 
-No page begins until the previous page passes the quality gate defined in `screen-checklist.md`. The vision board (`docs/vision-board/`) is the authoritative specification.
+Every milestone must:
+1. Build with 0 errors, 0 warnings
+2. Launch successfully (if visual)
+3. Be usable (not broken, not a placeholder)
+4. Preserve all previous milestones
 
----
-
-## Phase 0: Foundation Infrastructure
-
-> Before any screen can be built, the shared infrastructure must exist.
-
-### Milestone 0.1 — Application Shell
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Avalonia project setup | ⬜ Not Started | `apps/MathVerse.Desktop/` |
-| Program.cs entry point | ⬜ Not Started | |
-| App.axaml with Dark theme | ⬜ Not Started | FluentTheme, RequestedThemeVariant=Dark |
-| Design system resources | ⬜ Not Started | Colors.axaml, Brushes.axaml, Controls.axaml |
-| Global styles | ⬜ Not Started | Typography, buttons, inputs per design-rules.md |
-| Custom controls library | ⬜ Not Started | NavButton, ToolbarButton, PageCard |
-| MainWindow shell | ⬜ Not Started | Sidebar + ViewportHost + StatusBar |
-| WorkspaceViewModel | ⬜ Not Started | Single source of truth, page routing |
-| ViewportHost with DataTemplates | ⬜ Not Started | VM → View resolution |
-| Sidebar navigation | ⬜ Not Started | 10 nav buttons + settings, active state |
-| Status bar | ⬜ Not Started | Ready, version, backend status, GPU, time |
-| Global keyboard shortcuts | ⬜ Not Started | Ctrl+K, Escape, Tab navigation |
-| DI container setup | ⬜ Not Started | Register all ViewModels and services |
-
-### Milestone 0.2 — Shared Components
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Search overlay (Ctrl+K) | ⬜ Not Started | Global search with results dropdown |
-| Toast notification system | ⬜ Not Started | Info/Success/Warning/Error |
-| Modal dialog system | ⬜ Not Started | Centered modal with backdrop |
-| Context menu system | ⬜ Not Started | Right-click menus |
-| Loading/skeleton system | ⬜ Not Started | Skeleton screens, spinners, progress bars |
-| Empty state component | ⬜ Not Started | Illustration + title + CTA |
-| Error state component | ⬜ Not Started | Icon + message + retry |
-| Property panel controls | ⬜ Not Started | Sliders, toggles, color pickers, dropdowns |
-| Timeline control | ⬜ Not Started | Playback transport + frame slider |
+No milestone begins until the previous milestone passes the build gate.
 
 ---
 
-## Phase 1: Home Workspace
+## Phase 1: Application Core
 
-> Vision spec: `docs/vision-board/01-home-workspace.md`
+> Build the engine that the UI will sit on. No visuals except an empty shell.
+> No panels. No graphs. No rendering. Just the internal machinery.
+> Internally called "Application Core" because Application → Core → Workspace → Renderer → UI.
 
-### Milestone 1.1 — Home Page
+### Milestone 1.1 — Workspace Core
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Welcome section | ⬜ Not Started | Greeting + status summary |
-| Module cards grid (4x2) | ⬜ Not Started | 8 cards with icons, titles, descriptions |
-| Card hover animations | ⬜ Not Started | translateY + glow + shadow |
-| Card click navigation | ⬜ Not Started | Navigate to module page |
-| Recent projects section | ⬜ Not Started | Horizontal card row |
-| Recent equations section | ⬜ Not Started | Scrollable equation pills |
-| Favorite visualizations section | ⬜ Not Started | Thumbnail grid |
-| Search integration | ⬜ Not Started | Search bar in toolbar |
-| Page transition animations | ⬜ Not Started | Fade + slide |
+| Item | Status |
+|------|--------|
+| `Workspace` class (owns everything) | ⬜ |
+| `Document` class (owns a scene and its objects) | ⬜ |
+| `IWorkspaceObject` interface (Id, Name, Icon, TypeTag, IsVisible, IsLocked, IsPinned, IsSelected, IsExpanded, Tags, Category, ParentId, Children, Transform, Metadata, BoundingBox, Layer, Owner, CreatedAt, ModifiedAt) | ⬜ |
+| `WorkspaceObject` base class with Clone, Serialize, Destroy, Duplicate, Select, Deselect | ⬜ |
+| Object property change notification (INotifyPropertyChanged) | ⬜ |
+| Object add/remove from workspace | ⬜ |
+| Object hierarchy (parent/children) | ⬜ |
 
-**Quality Gate**: All 9 items complete + vision board match + keyboard nav works.
+### Milestone 1.2 — Object Registry
 
----
+| Item | Status |
+|------|--------|
+| `ObjectRegistry` (queryable collection of all objects) | ⬜ |
+| `GetById(Guid)`, `GetByType(string)`, `GetByTag(string)` | ⬜ |
+| `GetAll()`, `GetVisible()`, `GetSelected()` | ⬜ |
+| Object count, type counts | ⬜ |
 
-## Phase 2: Evaluate (Calculator)
+### Milestone 1.3 — Event Bus
 
-> Backend: `Math.CAS` (Evaluator, Simplifier, Parser, Factorizer, Expander)
+| Item | Status |
+|------|--------|
+| `EventBus` class (subscribe, unsubscribe, publish) | ⬜ |
+| Thread-safe implementation | ⬜ |
+| Event types: ObjectCreated, ObjectDeleted, ObjectSelectionChanged, ObjectPropertyChanged, ViewportCameraChanged, CommandExecuted, UndoPerformed, RedoPerformed, WorkspaceModeChanged | ⬜ |
+| Unit tests for pub/sub | ⬜ |
 
-### Milestone 2.1 — Evaluate Page
+### Milestone 1.4 — Selection Manager
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Expression input bar | ⬜ Not Started | Large text input with KaTeX preview |
-| Evaluate button + Ctrl+Enter | ⬜ Not Started | Triggers CAS evaluation |
-| Result display | ⬜ Not Started | Rendered mathematical output |
-| Step-by-step expansion | ⬜ Not Started | Toggle to show simplification steps |
-| History panel | ⬜ Not Started | List of previous evaluations |
-| Save to favorites | ⬜ Not Started | Star/bookmark expression |
-| Error handling | ⬜ Not Started | Parse errors, evaluation errors |
-| Empty state | ⬜ Not Started | "Type an expression to begin" |
-| Loading state | ⬜ Not Started | Spinner during evaluation |
+| Item | Status |
+|------|--------|
+| `SelectionManager` (single select, multi select) | ⬜ |
+| `Select(objectId)`, `Deselect(objectId)`, `DeselectAll()` | ⬜ |
+| `SelectedObjects` (read-only list) | ⬜ |
+| `PrimarySelection` (last selected) | ⬜ |
+| Fires `ObjectSelectionChanged` via EventBus | ⬜ |
 
-**Backend connections**: `Evaluator.Evaluate()`, `Simplifier.Simplify()`, `Parser.Parse()`, `Factorizer.Factor()`, `Expander.Expand()`
+### Milestone 1.5 — Command Manager
 
-**Quality Gate**: All 9 items complete + CAS produces correct results + no placeholders.
+| Item | Status |
+|------|--------|
+| `ICommand` interface (Name, CanExecute, Execute, GetUndoData) | ⬜ |
+| `CommandContext` (Workspace, SelectedObjects, ActiveTool) | ⬜ |
+| `CommandRegistry` (register, lookup by name) | ⬜ |
+| `CommandManager` (execute, track history) | ⬜ |
+| 5 initial commands: CreateObject, DeleteObject, SetObjectProperty, SetObjectVisibility, RenameObject | ⬜ |
 
----
+### Milestone 1.6 — Undo / Redo
 
-## Phase 3: Graph Studio
+| Item | Status |
+|------|--------|
+| `UndoManager` (per-workspace) | ⬜ |
+| `UndoTransaction` (operations + reverse) | ⬜ |
+| Gesture grouping (mouse drag = one step) | ⬜ |
+| `Undo()`, `Redo()` | ⬜ |
+| Max depth (500), memory pruning | ⬜ |
+| Fires `UndoPerformed`, `RedoPerformed` via EventBus | ⬜ |
 
-> Backend: `Math.Visualization` (CartesianPlot, SurfacePlot, 2D/3D plotters)
+### Milestone 1.7 — Tool Manager
 
-### Milestone 3.1 — 2D Graphing
+| Item | Status |
+|------|--------|
+| `ITool` interface (Activate, Deactivate, OnMouseXxx, OnWheel, OnKeyDown, DrawOverlay, Cursor) | ⬜ |
+| `ToolManager` (active tool, tool history) | ⬜ |
+| `SetTool(ITool)`, `PreviousTool()` | ⬜ |
+| Fires `ToolActivated`, `ToolDeactivated` via EventBus | ⬜ |
+| Initial tools: PanTool, ZoomTool, SelectTool | ⬜ |
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Function input | ⬜ Not Started | y = f(x) input with parsing |
-| 2D viewport with grid | ⬜ Not Started | Cartesian plane, axes, labels |
-| Plot rendering | ⬜ Not Started | Line, scatter, bar, polar |
-| Multiple functions | ⬜ Not Started | Add/remove/overlay |
-| Pan and zoom | ⬜ Not Started | Mouse wheel + drag |
-| Axis labels and ticks | ⬜ Not Started | Auto-scaling |
-| Legend | ⬜ Not Started | Color-coded function list |
-| Export 2D | ⬜ Not Started | PNG, SVG |
-| Parametric plots | ⬜ Not Started | (x(t), y(t)) |
-| Polar plots | ⬜ Not Started | r = f(θ) |
+### Milestone 1.8 — Workspace Mode Manager
 
-### Milestone 3.2 — 3D Graphing
+| Item | Status |
+|------|--------|
+| `WorkspaceMode` enum (Mathematics, Visualization, Geometry, Simulation, Research, Publication, Teaching) | ⬜ |
+| `ModeManager` (active mode, mode-specific tool defaults) | ⬜ |
+| `SetMode(WorkspaceMode)` | ⬜ |
+| Fires `WorkspaceModeChanged` via EventBus | ⬜ |
 
-| Item | Status | Notes |
-|------|--------|-------|
-| 3D viewport | ⬜ Not Started | WebGL/OpenGL canvas |
-| Surface plot | ⬜ Not Started | z = f(x,y) |
-| Wireframe mode | ⬜ Not Started | Toggle wireframe/solid |
-| Camera orbit/pan/zoom | ⬜ Not Started | Orbit tool |
-| Lighting | ⬜ Not Started | Directional + ambient |
-| Material properties | ⬜ Not Started | Color, opacity |
-| Export 3D | ⬜ Not Started | OBJ, glTF |
+### Milestone 1.9 — Object Factory
 
-**Backend connections**: `CartesianPlot.Create()`, `SurfacePlot.Create()`, `ScatterPlot`, `PolarPlot`, `ParametricPlot`
+| Item | Status |
+|------|--------|
+| `ObjectFactory` (create typed objects with defaults) | ⬜ |
+| `CreateGraph(expression, type, color)` | ⬜ |
+| `CreateExpression(expression)` | ⬜ |
+| `CreateGeometry(type)` | ⬜ |
+| `CreateSimulation(type)` | ⬜ |
+| All creation goes through ObjectFactory → Command system | ⬜ |
 
-**Quality Gate**: All 17 items complete + plots render correctly + no placeholders.
+### Milestone 1.10 — Compiler Layer
 
----
+| Item | Status |
+|------|--------|
+| `ICompiler` interface (Compile, Recompile) | ⬜ |
+| `ExpressionCompiler` (expression string → parsed expression) | ⬜ |
+| `GraphCompiler` (parsed expression + range → sampled points) | ⬜ |
+| `SurfaceCompiler` (expression + bounds → vertex grid) | ⬜ |
+| `MeshGenerator` (geometry definition → triangle mesh) | ⬜ |
+| `RenderCompiler` (compiled data → RenderObject) | ⬜ |
+| Compiler pipeline: Workspace Object → Compiled Object → Render Object | ⬜ |
+| Display property changes skip recompilation | ⬜ |
+| Mathematical property changes trigger recompilation | ⬜ |
 
-## Phase 4: Visualization Studio
+### Milestone 1.11 — Document Model
 
-> Vision spec: `docs/vision-board/02-visualization-studio.md`
+| Item | Status |
+|------|--------|
+| `Document` class (Id, Name, Type, Scene, Metadata, CreatedAt, ModifiedAt) | ⬜ |
+| `DocumentType` enum (Notebook, Graph, Simulation, Geometry, Scene) | ⬜ |
+| `Scene` class (Objects, Camera, Lights) | ⬜ |
+| `Workspace.Documents` collection | ⬜ |
+| `Workspace.ActiveDocument` property | ⬜ |
+| Single document mode (default) | ⬜ |
 
-### Milestone 4.1 — Visualization Shell
+### Milestone 1.12 — RenderObject Layer
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Three-column layout | ⬜ Not Started | Library (260px) | Viewport | Properties (280px) |
-| 3D viewport with grid | ⬜ Not Started | Reference grid + axes |
-| Library panel | ⬜ Not Started | 11 categories, expandable tree |
-| Properties panel | ⬜ Not Started | Collapsible sections |
-| Bottom timeline | ⬜ Not Started | Blender-style transport controls |
-| Panel resize handles | ⬜ Not Started | Drag to resize panels |
+| Item | Status |
+|------|--------|
+| `IRenderObject` interface (WorkspaceObjectId, Transform, IsVisible, Layer, BoundingBox, MeshData, Material, UpdateFrom) | ⬜ |
+| `RenderObject` base class | ⬜ |
+| `GraphRenderObject` (line segments, curve points) | ⬜ |
+| `SurfaceRenderObject` (triangle mesh) | ⬜ |
+| `GeometryRenderObject` (points, lines, polygons) | ⬜ |
+| `MeshRenderObject` (indexed triangle mesh) | ⬜ |
+| `RenderMaterial` (Color, Roughness, Metalness, Opacity, EmissiveColor) | ⬜ |
 
-### Milestone 4.2 — Visualization Content
+### Milestone 1.13 — Services
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Black hole scene | ⬜ Not Started | Core visualization per vision board |
-| Gravitational field lines | ⬜ Not Started | Animated curves |
-| Particle trajectories | ⬜ Not Started | Orbiting particles with trails |
-| Spacetime curvature grid | ⬜ Not Started | Warped mesh |
-| Vector field overlay | ⬜ Not Started | Directional arrows |
-| Animated equations | ⬜ Not Started | Floating labels |
-| Orbiting camera | ⬜ Not Started | Auto-orbit animation |
+| Item | Status |
+|------|--------|
+| `ObjectFactory` service (create typed objects with defaults) | ⬜ |
+| `ExpressionCompiler` service (parse and evaluate via backend) | ⬜ |
+| `GraphCompiler` service (generate render data from graph objects) | ⬜ |
+| `MeshGenerator` service (generate triangle meshes from geometry) | ⬜ |
+| `SelectionService` (single/multi selection management) | ⬜ |
+| `ClipboardService` (copy/paste workspace objects) | ⬜ |
+| `ExportService` (export objects to files) | ⬜ |
+| `ScreenshotService` (capture viewport as image) | ⬜ |
 
-### Milestone 4.3 — Properties Controls
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Animation controls | ⬜ Not Started | Play/Pause/Stop + timeline |
-| Camera controls | ⬜ Not Started | Mode, target, distance, FOV |
-| Lighting controls | ⬜ Not Started | Key/Fill/Rim + intensity |
-| Material controls | ⬜ Not Started | PBR: color, opacity, roughness, metalness |
-| Physics controls | ⬜ Not Started | Speed, particle count, trail, mass |
-| Export controls | ⬜ Not Started | Blender, OBJ, glTF, STL, Video, GIF |
-
-**Backend connections**: `VisualizationScene`, `SurfacePlot`, `PointCloud`, `Camera`, `Light`, `Material`, `AnimationTimeline`, `RenderingPipeline`, `SVGExporter`, `PNGExporter`
-
-**Quality Gate**: All 18 items complete + 3D scene renders + animations play + no placeholders.
-
----
-
-## Phase 5: Geometry Studio
-
-> Backend: `Math.Geometry`, `Math.Geometry.Advanced`
-
-### Milestone 5.1 — Geometry Page
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Interactive 2D canvas | ⬜ Not Started | Cartesian plane with grid |
-| Point creation | ⬜ Not Started | Click to place points |
-| Line/segment creation | ⬜ Not Started | Click two points |
-| Circle creation | ⬜ Not Started | Center + radius |
-| Polygon creation | ⬜ Not Started | Click vertices |
-| Measurement tools | ⬜ Not Started | Distance, angle, area |
-| Transform tools | ⬜ Not Started | Move, rotate, scale |
-| Construction tools | ⬜ Not Started | Perpendicular, parallel, bisector |
-| Properties panel | ⬜ Not Started | Object properties |
-| 3D geometry view | ⬜ Not Started | Toggle 3D view |
-| Export | ⬜ Not Started | SVG, OBJ, STL |
-
-**Backend connections**: `GeometryEngine` facade (CreatePoint2D/3D, CreateLine2D/3D, CreateCircle2D, CreateSphere, CreateMesh, etc.), `GeometryAdvancedEngine`
-
-**Quality Gate**: All 11 items complete + geometric operations work + no placeholders.
+**Build gate:** 0 errors, 0 warnings. All Application Core components compile. Unit tests pass for EventBus, SelectionManager, CommandManager, UndoManager.
 
 ---
 
-## Phase 6: Simulation Lab
+## Phase 2: Application Shell
 
-> Backend: `Math.Simulation` (SimulationEngine facade)
+> Empty window with panels. No functionality. Just docking.
 
-### Milestone 6.1 — Simulation Page
+### Milestone 2.1 — Empty Window
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Simulation category selector | ⬜ Not Started | Physics, Chemistry, Biology, Finance, etc. |
-| Parameter input panel | ⬜ Not Started | Domain-specific parameter controls |
-| 2D/3D visualization viewport | ⬜ Not Started | Real-time simulation rendering |
-| Play/Pause/Reset controls | ⬜ Not Started | Transport controls |
-| Timeline with speed control | ⬜ Not Started | Variable speed playback |
-| Real-time graphs | ⬜ Not Started | Live plots during simulation |
-| Data export | ⬜ Not Started | CSV, JSON |
-| Preset simulations | ⬜ Not Started | Pre-configured scenarios |
+| Item | Status |
+|------|--------|
+| MainWindow with dark background (#0B0B12) | ⬜ |
+| Menu bar (File, Edit, View, Insert, Help) | ⬜ |
+| Toolbar (placeholder buttons) | ⬜ |
+| Status bar | ⬜ |
+| Window resize, minimize, maximize | ⬜ |
 
-**Backend connections**: `SimulationEngine.SimulatePhysics()`, `SimulateThermodynamics()`, `LotkaVolterra()`, `SIRModel()`, `BlackScholesCall()`, `FFT()`, `SolveODE()`, `PIDControl()`, `ReynoldsNumber()`, etc.
+**Build gate:** 0 errors, 0 warnings, launches, dark theme.
 
-**Quality Gate**: All 8 items complete + simulations run + visualizations update + no placeholders.
+### Milestone 2.2 — Panel Layout
 
----
+| Item | Status |
+|------|--------|
+| Explorer panel (left, 220px) with header | ⬜ |
+| Inspector panel (right, 280px) with header | ⬜ |
+| Console panel (bottom, 140px) with header | ⬜ |
+| Viewport (center, persistent) | ⬜ |
+| Panel collapse/expand (click header) | ⬜ |
+| Panel resize (drag border) | ⬜ |
+| GridSplitter between panels | ⬜ |
 
-## Phase 7: AI Assistant
+**Build gate:** 0 errors, 0 warnings, all panels visible, resize works.
 
-> Backend: `Math.AI` + streaming LLM integration
+### Milestone 2.3 — Design System
 
-### Milestone 7.1 — AI Page
+| Item | Status |
+|------|--------|
+| Colors.axaml | ⬜ |
+| Brushes.axaml | ⬜ |
+| Controls.axaml (global styles) | ⬜ |
+| Typography (Inter font, size scale) | ⬜ |
+| Hover/pressed states | ⬜ |
+| Focus indicators | ⬜ |
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Chat interface | ⬜ Not Started | Message bubbles, input bar |
-| Streaming response display | ⬜ Not Started | Progressive text rendering |
-| Math rendering in responses | ⬜ Not Started | KaTeX in AI output |
-| Code/equation copy | ⬜ Not Started | One-click copy |
-| Context awareness | ⬜ Not Started | AI knows current page/objects |
-| Suggestion chips | ⬜ Not Started | Quick action suggestions |
-| Conversation history | ⬜ Not Started | Previous conversations list |
-| Visual generation | ⬜ Not Started | AI creates visualizations |
-| Error handling | ⬜ Not Started | API failures, rate limits |
-| Loading state | ⬜ Not Started | Thinking indicator |
-
-**Backend connections**: `Math.AI` services, streaming LLM API
-
-**Quality Gate**: All 10 items complete + AI responds + math renders + no placeholders.
+**Build gate:** 0 errors, 0 warnings, consistent dark theme.
 
 ---
 
-## Phase 8: Data Analysis
+## Phase 3: Connection Layer
 
-> Backend: `Math.DataScience` (DataFrame, importers, exporters, visualizers)
+> Wire the kernel to the panels. Selection → Inspector. Object Registry → Explorer. Viewport → Selection.
+> No rendering yet. Just data flow.
 
-### Milestone 8.1 — Data Analysis Page
+### Milestone 3.1 — Selection → Inspector
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Data import panel | ⬜ Not Started | CSV, JSON, XML, Excel drag-and-drop |
-| Data table view | ⬜ Not Started | Spreadsheet-like data display |
-| Column statistics | ⬜ Not Started | Summary stats per column |
-| Visualization panel | ⬜ Not Started | Charts: scatter, bar, histogram, heatmap, etc. |
-| Filtering controls | ⬜ Not Started | Filter rows by conditions |
-| Sorting controls | ⬜ Not Started | Sort by columns |
-| Missing value handling | ⬜ Not Started | Visual indicators + options |
-| Export | ⬜ Not Started | CSV, JSON, HTML, Markdown |
-| Correlation matrix | ⬜ Not Started | Heatmap visualization |
-| PCA / dimensionality reduction | ⬜ Not Started | 2D/3D projection |
+| Item | Status |
+|------|--------|
+| Inspector subscribes to `ObjectSelectionChanged` via EventBus | ⬜ |
+| When selection changes, Inspector shows selected object's properties | ⬜ |
+| "No selection" state | ⬜ |
+| Inspector renders property controls dynamically (text, checkbox, slider) | ⬜ |
 
-**Backend connections**: `DataFrame`, `DatasetImporter`, `CsvReader`, `JsonReader`, `DataVisualizer`, `DistributionVisualizer`, `PCAVisualizer`, `CorrelationMatrixVisualizer`
+**Build gate:** Selecting an object in code updates the Inspector panel.
 
-**Quality Gate**: All 10 items complete + data imports/exports + visualizations render + no placeholders.
+### Milestone 3.2 — Object Registry → Explorer
 
----
+| Item | Status |
+|------|--------|
+| Explorer subscribes to ObjectCreated, ObjectDeleted, ObjectPropertyChanged via EventBus | ⬜ |
+| Explorer displays object tree (grouped by type) | ⬜ |
+| Object icon (colored dot per type) | ⬜ |
+| Object name (editable on double-click) | ⬜ |
+| Click to select (calls SelectionManager) | ⬜ |
+| Empty state ("No objects yet") | ⬜ |
+| Visibility toggle | ⬜ |
+| Delete button | ⬜ |
 
-## Phase 9: Publications
+**Build gate:** Creating objects updates the Explorer. Clicking objects in Explorer selects them.
 
-> Backend: `Math.DataScience` export, LaTeX generation
+### Milestone 3.3 — Viewport → Selection
 
-### Milestone 9.1 — Publications Page
+| Item | Status |
+|------|--------|
+| ViewportPanel receives mouse events | ⬜ |
+| InteractionLayer translates input → ActiveTool calls | ⬜ |
+| SelectTool calls SelectionManager on click | ⬜ |
+| BoxSelectTool selects objects within rectangle | ⬜ |
+| Selection highlights in viewport (bounding box) | ⬜ |
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Publication template selector | ⬜ Not Started | Article, report, presentation |
-| Rich text editor | ⬜ Not Started | Mathematical content authoring |
-| Inline equation editor | ⬜ Not Started | KaTeX input |
-| Figure insertion | ⬜ Not Started | Embed visualizations |
-| Bibliography manager | ⬜ Not Started | Citations and references |
-| Preview panel | ⬜ Not Started | Live preview of output |
-| Export formats | ⬜ Not Started | PDF, LaTeX, HTML |
-| Template customization | ⬜ Not Started | Styles, fonts, layout |
-
-**Quality Gate**: All 8 items complete + publications generate + no placeholders.
-
----
-
-## Phase 10: Learning
-
-> No specific backend — curated content and guided experiences
-
-### Milestone 10.1 — Learning Page
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Course catalog | ⬜ Not Started | Browse available courses |
-| Course player | ⬜ Not Started | Step-by-step lesson viewer |
-| Interactive exercises | ⬜ Not Started | Math problems with visual feedback |
-| Progress tracking | ⬜ Not Started | Completion indicators |
-| Bookmarking | ⬜ Not Started | Save courses for later |
-| Search courses | ⬜ Not Started | Find by topic |
-
-**Quality Gate**: All 6 items complete + courses load + progress saves + no placeholders.
+**Build gate:** Clicking in the viewport selects objects. Selection shows bounding box.
 
 ---
 
-## Phase 11: Settings
+## Phase 4: Rendering
 
-### Milestone 11.1 — Settings Page
+> The viewport renders workspace objects. Leverages existing GraphRenderer.
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Theme settings | ⬜ Not Started | Dark theme (only option initially) |
-| Font size | ⬜ Not Started | UI scaling |
-| Default export location | ⬜ Not Started | File path configuration |
-| GPU settings | ⬜ Not Started | Rendering backend selection |
-| Performance settings | ⬜ Not Started | Quality vs performance |
-| Keyboard shortcuts | ⬜ Not Started | View and customize |
-| About | ⬜ Not Started | Version, credits, licenses |
-| Reset to defaults | ⬜ Not Started | Restore all settings |
+### Milestone 4.1 — Viewport Core
 
-**Quality Gate**: All 8 items complete + settings persist + no placeholders.
+| Item | Status |
+|------|--------|
+| ViewportRenderer (wraps existing GraphRenderer) | ⬜ |
+| SceneGraph (mirrors workspace object tree) | ⬜ |
+| Background render thread | ⬜ |
+| Viewport resize → renderer resize | ⬜ |
+| PanTool (middle-mouse drag) | ⬜ |
+| ZoomTool (scroll wheel) | ⬜ |
+| Home (double-click) | ⬜ |
+| Coordinate display (follows mouse) | ⬜ |
+| Zoom level display | ⬜ |
+
+**Build gate:** 0 errors, 0 warnings, viewport renders, pan/zoom works.
+
+### Milestone 4.2 — Grid Pass
+
+| Item | Status |
+|------|--------|
+| Reference grid (toggleable) | ⬜ |
+| Axis lines (thicker, colored) | ⬜ |
+| Tick labels (auto-scaling) | ⬜ |
+| Toggle grid (Ctrl+G) | ⬜ |
+
+### Milestone 4.3 — Scene Pass
+
+| Item | Status |
+|------|--------|
+| Graph objects render in viewport (using existing GraphRenderer) | ⬜ |
+| All 15 graph types (Cartesian, Polar, Parametric, Surface, VectorField, Contour, Heatmap, Scatter, Histogram, Fractal) | ⬜ |
+| Multiple graphs simultaneously | ⬜ |
+| Parameter sliders update in real-time | ⬜ |
+| 3D rotation for surface/fractal | ⬜ |
+| Fit All after adding graph | ⬜ |
+
+### Milestone 4.4 — Selection Pass
+
+| Item | Status |
+|------|--------|
+| Bounding box on selected object | ⬜ |
+| Selection highlight (outline) | ⬜ |
+
+**Build gate:** 0 errors, 0 warnings, graphs render, selection highlights.
+
+---
+
+## Phase 5: Console
+
+> Expression evaluation. Quick math operations.
+
+### Milestone 5.1 — Console Panel
+
+| Item | Status |
+|------|--------|
+| Expression input (monospace) | ⬜ |
+| Evaluate (Enter) — uses backend CAS | ⬜ |
+| Quick operation buttons (Eval, Simplify, Factor, Expand, d/dx, ∫, lim, Series, Solve) | ⬜ |
+| Results list (input/output pairs) | ⬜ |
+| Error display (red text) | ⬜ |
+| Clear button | ⬜ |
+| Expression history (Up/Down arrows) | ⬜ |
+| "Add to Workspace" creates Expression object | ⬜ |
+
+**Build gate:** 0 errors, 0 warnings, all 9 CAS operations produce real results.
+
+---
+
+## Phase 6: Inspector
+
+> Dynamic property editing. Two-way binding.
+
+### Milestone 6.1 — Inspector Properties
+
+| Item | Status |
+|------|--------|
+| GraphObject properties: Expression, Type, Color, LineWidth, Domain, Options | ⬜ |
+| Color picker (preset circles) | ⬜ |
+| Line width slider | ⬜ |
+| Domain inputs (X/Y min/max) | ⬜ |
+| Checkboxes (ShowFill, ShowGrid) | ⬜ |
+| Parameter sliders (dynamic) | ⬜ |
+| Two-way binding (change property → update object → re-render) | ⬜ |
+| Quick Add presets section | ⬜ |
+| Remove button | ⬜ |
+
+**Build gate:** Editing Inspector properties updates objects and re-renders.
+
+---
+
+## Phase 7: Undo/Redo Integration
+
+> Wire undo to all operations.
+
+### Milestone 7.1 — Undo Integration
+
+| Item | Status |
+|------|--------|
+| All object creation commands produce undo data | ⬜ |
+| All object deletion commands produce undo data | ⬜ |
+| All property changes produce undo data | ⬜ |
+| Ctrl+Z undoes last operation | ⬜ |
+| Ctrl+Shift+Z redoes | ⬜ |
+| Undo restores exact previous state | ⬜ |
+
+**Build gate:** All operations are undoable.
+
+---
+
+## Phase 8: Persistence
+
+> Save and load workspaces.
+
+### Milestone 8.1 — File I/O
+
+| Item | Status |
+|------|--------|
+| Workspace serialization (JSON) | ⬜ |
+| Workspace deserialization | ⬜ |
+| Save (Ctrl+S) | ⬜ |
+| Save As (Ctrl+Shift+S) | ⬜ |
+| Open (Ctrl+O) | ⬜ |
+| New Workspace (Ctrl+N) | ⬜ |
+| Auto-save (every 60s) | ⬜ |
+| Export PNG (Ctrl+E) | ⬜ |
+
+**Build gate:** Save/load roundtrip works. Objects persist.
+
+---
+
+## Phase 9: Command Palette
+
+> Power-user command discovery.
+
+### Milestone 9.1 — Command Palette
+
+| Item | Status |
+|------|--------|
+| Ctrl+Shift+P opens palette | ⬜ |
+| Search by command name | ⬜ |
+| Execute selected command | ⬜ |
+| Escape to close | ⬜ |
+| All registered commands appear | ⬜ |
+
+**Build gate:** Command palette works, all commands accessible.
+
+---
+
+## Phase 10: Workspace Modes
+
+> Tool configuration changes per mode.
+
+### Milestone 10.1 — Mode System
+
+| Item | Status |
+|------|--------|
+| Mode selector in toolbar | ⬜ |
+| Mode changes panel visibility/content | ⬜ |
+| Mathematics mode (default) | ⬜ |
+| Visualization mode (3D focus) | ⬜ |
+| Geometry mode (2D canvas focus) | ⬜ |
+| Mode does not reset viewport | ⬜ |
+| Mode does not reset objects | ⬜ |
+
+**Build gate:** Switching modes changes tools, not viewport.
+
+---
+
+## Phase 11: Tool System
+
+> Full tool implementations.
+
+### Milestone 11.1 — Core Tools
+
+| Item | Status |
+|------|--------|
+| PanTool | ⬜ |
+| ZoomTool | ⬜ |
+| RotateTool | ⬜ |
+| SelectTool | ⬜ |
+| BoxSelectTool | ⬜ |
+| MoveTool (G key) | ⬜ |
+| MeasureTool (distance, angle) | ⬜ |
+| AddGraphTool | ⬜ |
+| AddPointTool | ⬜ |
+| AddLineTool | ⬜ |
+| AddCircleTool | ⬜ |
+| Tool menu (Space key) | ⬜ |
+| Esc to previous tool | ⬜ |
+
+**Build gate:** All tools work. No switch statements. Polymorphic dispatch.
+
+---
+
+## Phase 12: Viewport Gizmos
+
+> Visual overlays.
+
+### Milestone 12.1 — Gizmos
+
+| Item | Status |
+|------|--------|
+| Origin marker | ⬜ |
+| Coordinate cursor (follows mouse) | ⬜ |
+| Measurement line (when measuring) | ⬜ |
+| Object label overlay | ⬜ |
+| Transform gizmo (move handles) | ⬜ |
+
+**Build gate:** Gizmos appear and update.
+
+---
+
+## Phase 13: Geometry Objects
+
+> Interactive 2D geometry.
+
+### Milestone 13.1 — Geometry
+
+| Item | Status |
+|------|--------|
+| Point creation (click to place) | ⬜ |
+| Line creation (click two points) | ⬜ |
+| Circle creation (center + radius) | ⬜ |
+| Polygon creation (click vertices) | ⬜ |
+| Geometry rendering in viewport | ⬜ |
+| Geometry properties in Inspector | ⬜ |
+| Measurement tools | ⬜ |
+| Export geometry (SVG) | ⬜ |
+
+**Build gate:** Geometry creates and renders.
+
+---
+
+## Phase 14: Timeline & Simulation
+
+> Animation and simulation playback.
+
+### Milestone 14.1 — Timeline
+
+| Item | Status |
+|------|--------|
+| Timeline panel (below viewport) | ⬜ |
+| Play/Pause/Stop controls | ⬜ |
+| Frame slider | ⬜ |
+| Speed control | ⬜ |
+| Loop toggle | ⬜ |
+
+### Milestone 14.2 — Simulation Integration
+
+| Item | Status |
+|------|--------|
+| SimulationObject creation | ⬜ |
+| Parameter controls in Inspector | ⬜ |
+| Real-time playback in viewport | ⬜ |
+| Real-time graphs during simulation | ⬜ |
+| Data export (CSV) | ⬜ |
+
+**Build gate:** Simulations run and visualize.
+
+---
+
+## Phase 15: AI Assistant
+
+> AI-powered math assistance.
+
+### Milestone 15.1 — AI Panel
+
+| Item | Status |
+|------|--------|
+| Chat interface (message bubbles) | ⬜ |
+| Expression input | ⬜ |
+| AI response display | ⬜ |
+| Context awareness (workspace objects) | ⬜ |
+| Suggestion chips | ⬜ |
+| Conversation history | ⬜ |
+| Integration with CAS backend | ⬜ |
+
+**Build gate:** AI responds to math questions.
 
 ---
 
 ## Completion Summary
 
-| Phase | Screen | Items | Status |
-|-------|--------|-------|--------|
-| 0.1 | App Shell | 12 | ⬜ Not Started |
-| 0.2 | Shared Components | 9 | ⬜ Not Started |
-| 1 | Home Workspace | 9 | ⬜ Not Started |
-| 2 | Evaluate | 9 | ⬜ Not Started |
-| 3 | Graph Studio | 17 | ⬜ Not Started |
-| 4 | Visualization Studio | 18 | ⬜ Not Started |
-| 5 | Geometry Studio | 11 | ⬜ Not Started |
-| 6 | Simulation Lab | 8 | ⬜ Not Started |
-| 7 | AI Assistant | 10 | ⬜ Not Started |
-| 8 | Data Analysis | 10 | ⬜ Not Started |
-| 9 | Publications | 8 | ⬜ Not Started |
-| 10 | Learning | 6 | ⬜ Not Started |
-| 11 | Settings | 8 | ⬜ Not Started |
-| **Total** | | **135** | **0%** |
+| Phase | Description | Milestones | Status |
+|-------|------------|------------|--------|
+| 1 | Workspace Kernel | 9 | ⬜ |
+| 2 | Application Shell | 3 | ⬜ |
+| 3 | Connection Layer | 3 | ⬜ |
+| 4 | Rendering | 4 | ⬜ |
+| 5 | Console | 1 | ⬜ |
+| 6 | Inspector | 1 | ⬜ |
+| 7 | Undo/Redo Integration | 1 | ⬜ |
+| 8 | Persistence | 1 | ⬜ |
+| 9 | Command Palette | 1 | ⬜ |
+| 10 | Workspace Modes | 1 | ⬜ |
+| 11 | Tool System | 1 | ⬜ |
+| 12 | Viewport Gizmos | 1 | ⬜ |
+| 13 | Geometry | 1 | ⬜ |
+| 14 | Timeline & Simulation | 2 | ⬜ |
+| 15 | AI Assistant | 1 | ⬜ |
+| **Total** | | **32** | **0%** |
 
 ---
 
 ## Priority Order
 
-The phases are ordered by user impact and dependency:
+1. **Phase 1** — Workspace Kernel (the engine everything plugs into)
+2. **Phase 2** — Application Shell (empty window with panels)
+3. **Phase 3** — Connection Layer (selection → inspector, registry → explorer, viewport → selection)
+4. **Phase 4** — Rendering (viewport renders objects)
+5. **Phase 5** — Console (quick math)
+6. **Phase 6** — Inspector (property editing)
+7. **Phase 7** — Undo/Redo (safety net)
+8. **Phase 8** — Persistence (save/load)
+9. **Phase 9** — Command Palette (power user)
+10. **Phase 10** — Workspace Modes (tool organization)
+11. **Phase 11** — Tool System (viewport interaction)
+12. **Phase 12** — Viewport Gizmos (visual feedback)
+13. **Phase 13** — Geometry (interactive creation)
+14. **Phase 14** — Timeline + Simulation (dynamic content)
+15. **Phase 15** — AI (intelligence layer)
 
-1. **Phase 0** (Foundation) — Required before anything else
-2. **Phase 1** (Home) — First thing users see
-3. **Phase 2** (Evaluate) — Core math interaction, simplest to implement
-4. **Phase 3** (Graph) — Core visualization, high user value
-5. **Phase 4** (Visualization) — Flagship feature, highest complexity
-6. **Phase 5** (Geometry) — Interactive, high engagement
-7. **Phase 6** (Simulation) — High value, leverages existing backend
-8. **Phase 7** (AI) — Differentiator, leverages existing backend
-9. **Phase 8** (Data) — Professional use case
-10. **Phase 9** (Publications) — Output-focused
-11. **Phase 10** (Learning) — Content-focused
-12. **Phase 11** (Settings) — Can be minimal initially
+After Phase 4, the application renders graphs.
+After Phase 8, it saves and loads workspaces.
+After Phase 11, it feels like Blender for mathematics.
+After Phase 15, it is the full product vision.

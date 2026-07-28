@@ -14,6 +14,18 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Kernel\MathVerse.Kernel.csproj" />
+    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
+    <ProjectReference Include="..\..\src\Math\Parsing\MathVerse.Math.Parsing.csproj" />
+    <ProjectReference Include="..\..\src\Math\Algebra\MathVerse.Math.Algebra.csproj" />
+    <ProjectReference Include="..\..\src\Math\Calculus\MathVerse.Math.Calculus.csproj" />
+    <ProjectReference Include="..\..\src\Math\Visualization\MathVerse.Math.Visualization.csproj" />
+    <ProjectReference Include="..\..\src\Domain\MathVerse.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Application\MathVerse.Application.csproj" />
   </ItemGroup>
 
 </Project>
