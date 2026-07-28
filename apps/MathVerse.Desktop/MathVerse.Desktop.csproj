@@ -14,29 +14,6 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="Avalonia.Diagnostics" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaResource Include="Themes\**\*.axaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Math\Core\MathVerse.Math.Core.csproj" />
-    <ProjectReference Include="..\..\src\Math\Parsing\MathVerse.Math.Parsing.csproj" />
-    <ProjectReference Include="..\..\src\Math\CAS\MathVerse.Math.CAS.csproj" />
-    <ProjectReference Include="..\..\src\Math\Simplification\MathVerse.Math.Simplification.csproj" />
-    <ProjectReference Include="..\..\src\Math\Calculus\MathVerse.Math.Calculus.csproj" />
-    <ProjectReference Include="..\..\src\Math\Algebra\MathVerse.Math.Algebra.csproj" />
-    <ProjectReference Include="..\..\src\Math\Numerics\MathVerse.Math.Numerics.csproj" />
-    <ProjectReference Include="..\..\src\Math\Semantics\MathVerse.Math.Semantics.csproj" />
-    <ProjectReference Include="..\..\src\Math\Foundation\MathVerse.Math.Foundation.csproj" />
-    <ProjectReference Include="..\..\src\Math\Geometry\MathVerse.Math.Geometry.csproj" />
-    <ProjectReference Include="..\..\src\Math\Visualization\MathVerse.Math.Visualization.csproj" />
   </ItemGroup>
 
 </Project>
