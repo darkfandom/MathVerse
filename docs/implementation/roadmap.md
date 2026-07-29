@@ -6,8 +6,8 @@
 > **Internal Naming:** Application Core (not "Workspace Kernel")
 > **Version:** v1.0 (Frozen)
 
-> **Architecture:** 26 sections, ~1,400 lines
-> **Design Rules:** 13 mandatory rules
+> **Architecture:** 27 sections, ~1,700 lines
+> **Design Rules:** 18 mandatory rules
 > **Phases:** 15 phases, 35 milestones
 > **Current Phase:** 1 — Application Core
 

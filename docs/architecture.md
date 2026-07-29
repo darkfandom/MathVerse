@@ -146,12 +146,86 @@ Blender is an editor. Unreal Engine is an editor. Visual Studio is an editor. CA
 
 MathVerse is an editor for mathematical objects.
 
+### 2.12 The Viewport Is Sacred
+
+The viewport is the heart of the application. It never disappears. It never gets recreated. It never becomes a page.
+
+Everything interesting happens inside the viewport. Panels only support the viewport. The viewport is not one feature. It is the application.
+
+This is non-negotiable. Viewport recreation is a design error.
+
+### 2.13 The UI Is Only a Projection of the Workspace
+
+The UI must never own application state. The Workspace owns all state. Every panel is only a visual representation of that state.
+
+```
+Explorer  projects  Workspace.Objects
+Inspector projects  SelectedObject
+Timeline  projects  AnimationSystem
+Console   projects  CommandSystem
+Viewport  projects  Scene
+```
+
+If a panel disappears, nothing is lost. If a panel is recreated, it must reconstruct itself entirely from Workspace state.
+
+Panels are disposable. Workspace is permanent. No panel may become the source of truth.
+
+### 2.14 Every New Object Must Require Zero UI Changes
+
+When someone later adds `TensorObject`, `MeshObject`, `AudioObject`, `ChemicalObject`, or `QuantumCircuitObject`, the UI must already know how to:
+- display it
+- select it
+- inspect it
+- duplicate it
+- delete it
+- serialize it
+- undo it
+
+without modifying Explorer, Inspector, History, or Selection code.
+
+If adding a new object requires rewriting the UI, the architecture has failed.
+
+### 2.15 Optimize for Composability, Not Features
+
+Never optimize for "getting a feature working." Optimize for making the next 100 features require almost no architectural change.
+
+If a proposed implementation solves today's problem but makes tomorrow's harder, reject it and redesign the system first.
+
+Do not implement isolated features. Always identify the underlying reusable system.
+
+Wrong: "Add graph color picker."
+Correct: Build a Property Editing System that any WorkspaceObject can expose.
+
+Wrong: "Add animation playback."
+Correct: Build a Timeline System that any time-dependent object can use.
+
+Wrong: "Add graph selection."
+Correct: Build a universal Selection System used by every object type.
+
+Every implementation must ask: "What system does this belong to?" before writing code.
+
+### 2.16 Think Like Blender — Architecturally
+
+Do not imitate Blender visually. Imitate Blender architecturally:
+
+- Persistent workspace — the workspace is the operating system
+- Object-oriented editing — everything is an object
+- Modal tools — active tool determines interaction
+- Command history — every action is a command with undo
+- Event-driven updates — panels react, never poll
+- Reusable systems — selection, editing, rendering are universal
+- Long-lived objects — objects persist until explicitly deleted
+- Panels as projections — UI reflects workspace state, never owns it
+- Renderer separated from editor state — renders RenderObjects, not math objects
+
+We are not building a "graphing app." We are building the editor that can eventually contain graphing, symbolic mathematics, geometry, simulation, animation, visualization, publications, datasets, AI, and future scientific domains without requiring architectural rewrites.
+
 ---
 
 ## 3. Application Model
 
 ```
-MathVerse Application
+MathVerse Application (runtime)
 ├── Application Shell (window, menu, toolbar, status bar)
 ├── Service Registry (dependency injection)
 ├── EventBus (global message bus)
@@ -160,10 +234,13 @@ MathVerse Application
 │   ├── Selection State
 │   ├── Viewport State (camera, zoom, grid)
 │   ├── Panel Layout (which panels are open, their sizes)
-│   ├── Undo Stack (per-workspace)
-│   └── Expression History
+│   ├── Undo Stack (per-workspace, runtime only — NOT saved)
+│   ├── Expression History (runtime only — NOT saved)
+│   ├── Compiled Cache (runtime only — NOT saved)
+│   ├── Dirty Flags (runtime only — NOT saved)
+│   └── GPU Resources (runtime only — NOT saved)
 ├── Tool System (active tool)
-└── Clipboard Manager
+└── Clipboard Manager (runtime only — NOT saved)
 ```
 
 ### 3.1 Single Document
@@ -172,20 +249,54 @@ One workspace. One window. No tabs. No multi-document.
 
 If a second workspace is needed in the future, it opens in a new window (like Blender). Workspace tabs can be added later without changing the foundation.
 
-### 3.2 Persistence
+### 3.2 Runtime vs Saved Project
+
+The project file and the runtime are separate layers. The runtime contains everything needed for interactive work. The project file contains only the data that survives restart.
+
+```
+.mathverse Project File (persistent)
+├── Metadata (name, version, created, modified)
+├── Objects[] (serialized object tree — expressions, properties, ranges)
+├── Camera (position, target, FOV)
+├── Lights[]
+├── PanelLayout (panel sizes and visibility)
+│
+NOT saved:
+├── ✗ Compiled meshes (recompiled on load)
+├── ✗ GPU buffers (rebuilt on load)
+├── ✗ Undo history (cleared on save)
+├── ✗ Temporary cache (cleared on load)
+├── ✗ Dirty flags (reset on load)
+├── ✗ Expression history (optional session state)
+├── ✗ Clipboard contents (lost on close)
+├── ✗ Render passes (regenerated on open)
+└── ✗ Tool state (reset to default tool)
+```
+
+### 3.3 Project Serialization
 
 The workspace serializes to a single `.mathverse` file (JSON format).
 
 ```
 WorkspaceFile
 ├── Metadata (name, version, created, modified)
-├── Objects[] (serialized object tree)
-├── ViewportState (camera position, zoom, grid)
+├── Objects[] (expression strings, graph ranges, camera position — NOT compiled data)
 ├── PanelLayout (panel sizes and visibility)
-└── ExpressionHistory
 ```
 
 Auto-save runs every 60 seconds. Crash recovery restores from the last auto-save.
+
+Load path:
+```
+.mathverse → Document → Scene → Workspace → Compile → RenderObjects → GPU
+```
+
+Save path:
+```
+GPU → RenderObjects → (skip) → Workspace → Document → .mathverse
+```
+
+Load recompiles. Save skips compiled data.
 
 ---
 
@@ -394,7 +505,86 @@ For now: single document, single scene.
 
 ---
 
-## 6. Object Lifecycle
+## 6. Asset System
+
+Objects are not the only reusable resources. MathVerse also has assets — resources that multiple objects can reference.
+
+```
+Workspace
+├── Documents
+│   └── Scene
+│       └── Objects (instances referencing assets)
+
+Assets
+├── Expressions (reusable formulas, constants, functions)
+├── Graph Styles (color maps, line styles, grid configs)
+├── Materials (colors, roughness, metalness, opacity)
+├── Color Maps (gradient definitions for heatmaps, contours)
+├── Meshes (reusable 3D geometry — spheres, cubes, landscapes)
+├── Textures (image data for materials)
+├── Images (screenshots, imported images)
+├── Datasets (tabular data, CSV imports, generated data)
+└── Publications (reusable document templates)
+```
+
+### 6.1 Asset Interface
+
+```
+IAsset
+├── Id: Guid
+├── Name: string
+├── Type: AssetType (Expression, Material, Dataset, Mesh, Image, ...)
+├── Data: byte[] (serialized)
+├── Thumbnail: byte[]? (preview)
+├── Tags: List<string>
+├── CreatedAt: DateTime
+├── ModifiedAt: DateTime
+└── ReferenceCount: int (how many objects use this asset)
+```
+
+### 6.2 Why Assets
+
+Without an asset system, data gets duplicated everywhere:
+
+```
+Dataset "stock_data.csv"
+├── Graph 1 (duplicates data)
+├── Graph 2 (duplicates data)
+├── Simulation (duplicates data)
+└── Publication (duplicates data)
+```
+
+With assets:
+
+```
+Dataset "stock_data.csv" (single source)
+├── Graph 1 references
+├── Graph 2 references
+├── Simulation references
+└── Publication references
+```
+
+### 6.3 Asset Rules
+
+1. Assets are independent of the scene — they survive object deletion
+2. Multiple objects can reference the same asset
+3. Assets are serialized in the `.mathverse` file alongside the scene
+4. Asset changes notify all referencing objects via EventBus
+5. Reference counting prevents accidental data loss
+
+### 6.4 Asset ↔ Object Relationship
+
+```
+Asset (data)
+  ↑ references
+Object (instance, transform, override style)
+  ↓ produces
+RenderObject (concrete geometry)
+```
+
+Changing an asset triggers recompilation of all objects that reference it. Changing an object's transform or style does not recompile the asset.|---
+
+## 7. Object Lifecycle
 
 Every object follows exactly the same lifecycle. No exceptions.
 
@@ -426,7 +616,7 @@ Create → Initialize → Compile → Render → Modify → Recompile → Render
 
 ---
 
-## 7. Workspace Modes
+## 8. Workspace Modes
 
 Workspace modes change the **layout of tools and panels** — not the viewport, not the objects, not the data.
 
@@ -465,7 +655,7 @@ Mode selector is in the Toolbar — a dropdown or segmented control.
 
 ---
 
-## 8. Tool System
+## 9. Tool System
 
 Tools are the primary interaction model for the viewport. Like Blender, the active tool determines what happens when the user interacts with the viewport.
 
@@ -539,7 +729,7 @@ Panels update
 
 ---
 
-## 9. Viewport Gizmos
+## 10. Viewport Gizmos
 
 Gizmos are visual overlays in the viewport. They are NOT UI controls. They are visual indicators that help the user understand spatial relationships.
 
@@ -566,7 +756,7 @@ Gizmos render on top of the scene. They are NOT affected by scene lighting or ma
 
 ---
 
-## 10. Event System
+## 11. Event System
 
 ### 9.1 EventBus
 
@@ -641,7 +831,7 @@ Status bar updates
 
 ---
 
-## 11. Command System
+## 12. Command System
 
 Every user action is a command. Commands are the only way to modify workspace state.
 
@@ -740,7 +930,7 @@ This is a power-user accelerator. Every command is also accessible through visib
 
 ---
 
-## 12. Undo System
+## 13. Undo System
 
 ### 11.1 Architecture
 
@@ -786,7 +976,7 @@ Undo history is NOT serialized. The workspace file saves the final state only. U
 
 ---
 
-## 13. Selection System
+## 14. Selection System
 
 ### 12.1 Selection Model
 
@@ -822,7 +1012,7 @@ When selection changes:
 
 ---
 
-## 14. Services
+## 15. Services
 
 Not everything belongs in ViewModels. Services are stateless or singleton classes that provide capabilities to the workspace.
 
@@ -854,7 +1044,7 @@ Services
 
 ---
 
-## 15. Console
+## 16. Console
 
 The Console is a command-line interface for quick mathematical operations.
 
@@ -887,7 +1077,7 @@ The console is not isolated. It connects to the workspace:
 
 ---
 
-## 16. Compiler Layer
+## 17. Compiler Layer
 
 Between workspace objects and render objects sits a compiler layer. This separates computation from display.
 
@@ -901,55 +1091,123 @@ Render Object (triangles, colors, transforms)
 Viewport Renderer (rasterize to screen)
 ```
 
-### 14.1 Why a Compiler Layer
+### 17.1 Why a Compiler Layer
 
 Without this, changing colors requires recompiling expressions. Changing visibility requires recomputing math. Changing zoom requires evaluating again.
 
 Professional software separates these stages.
 
-### 14.2 Compiler Pipeline
+### 17.2 Update Pipeline (Dirty Flags)
+
+Every object has dirty flags that determine what needs recompilation.
+
+```
+Object
+    ↓
+Dirty Flags?
+    ├── StyleDirty (color, visibility, line width)  →  NO recompilation
+    ├── DataDirty (expression, range, resolution)   →  Full recompilation
+    └── GeometryDirty (mesh vertices, topology)     →  Mesh recompilation
+    ↓
+Compiler (only if data or geometry changed)
+    ↓
+RenderObject
+    ↓
+Renderer
+```
+
+Dirty flag rules:
+- **StyleDirty**: set when color, visibility, opacity, line width change. Only triggers re-render, not recompilation.
+- **DataDirty**: set when expression, range, resolution, or any mathematical property changes. Triggers full recompilation.
+- **GeometryDirty**: set when mesh vertices, topology, or spatial data changes. Triggers mesh recompilation only.
+
+After recompilation, all dirty flags are cleared.
+
+### 17.3 Compiler Pipeline
 
 | Stage | Input | Output | Trigger |
 |-------|-------|--------|---------|
-| Expression Compiler | Expression string | Parsed Expression | Object created/modified |
-| Graph Compiler | Parsed Expression + range | Sampled points | Expression changed |
-| Mesh Generator | Geometry definition | Triangle mesh | Geometry changed |
-| Surface Compiler | Expression + bounds | Vertex grid | Expression changed |
-| Render Compiler | Compiled data | RenderObject | Compiled data changed |
+| Expression Compiler | Expression string | Parsed Expression | DataDirty |
+| Graph Compiler | Parsed Expression + range | Sampled points | DataDirty |
+| Mesh Generator | Geometry definition | Triangle mesh | GeometryDirty |
+| Surface Compiler | Expression + bounds | Vertex grid | DataDirty |
+| Render Compiler | Compiled data | RenderObject | Any compile output |
 
-### 14.3 Compiler Rules
+### 17.4 Compiler Rules
 
 1. Compilers never draw
 2. Compilers never select
 3. Compilers never save
 4. Compilers only generate render-ready data
-5. Changing display properties (color, visibility, line width) skips recompilation
-6. Changing mathematical properties (expression, range, resolution) triggers recompilation
+5. StyleDirty skips compilation entirely
+6. DataDirty triggers full pipeline
+7. After compilation, all dirty flags reset
 
-### 14.4 Full Pipeline Example
+### 17.5 Cache Layer
+
+Professional applications cache almost everything. The compiler caches its output so the next frame never recomputes `sin(x)` unless something changed.
+
+```
+Expression
+    ↓
+Compiler
+    ↓
+Compiled Expression → Cached
+    ↓
+Graph Samples → Cached (keyed by expression hash + range)
+    ↓
+Renderer
+```
+
+Cache rules:
+1. Cache entries are keyed by (object Id, compiler stage, property hash)
+2. DataDirty invalidates the cache for the affected branch
+3. StyleDirty does NOT invalidate the cache
+4. Cache is cleared when:
+   - Object is deleted
+   - Object is modified (DataDirty)
+   - Workspace is closed
+   - Cache pressure (memory limit exceeded)
+5. Cache is NOT serialized — rebuilt on load
+
+### 17.6 Full Pipeline Example
 
 ```
 User types "sin(x)" in Inspector
       ↓
+Object.DataDirty = true
+      ↓
 Expression Compiler parses → Parsed Expression
+      ↓
+Cache[exprHash] = Parsed Expression
       ↓
 Graph Compiler samples → 1000 points
       ↓
+Cache[sampleHash] = Sampled Points
+      ↓
 Render Compiler builds → Line segments
       ↓
+RenderObject (cached)
+      ↓
 Viewport Renderer draws → Pixels on screen
+      ↓
+DataDirty = false
 ```
 
 User changes color to red:
 ```
 RenderObject.Material.Color = Red
       ↓
-Viewport Renderer redraws (no recompilation)
+Object.StyleDirty = true
+      ↓
+Viewport Renderer redraws (no cache invalidation, no recompilation)
+      ↓
+StyleDirty = false
 ```
 
 ---
 
-## 17. RenderObject Layer
+## 18. RenderObject Layer
 
 Workspace objects are never rendered directly. Instead, each object produces a RenderObject that the renderer consumes.
 
@@ -1018,7 +1276,7 @@ Later phases add: ShadowPass, PostProcessingPass, PhysicsOverlayPass, Measuremen
 
 ---
 
-## 18. Rendering Architecture
+## 19. Rendering Architecture
 
 One renderer. Multiple render passes. Not separate renderers per object type.
 
@@ -1112,7 +1370,7 @@ The UI thread never blocks on rendering.
 
 ---
 
-## 19. Interaction Layer
+## 20. Interaction Layer
 
 Separate from rendering. Separate from the workspace. Sits between the viewport and the tools.
 
@@ -1172,47 +1430,90 @@ Panels update, Renderer re-renders
 
 ---
 
-## 20. Threading Model
+## 21. Threading Model
+
+Four explicit threads. No thread crosses into another's domain except through the EventBus.
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ UI Thread (Avalonia Dispatcher)                           │
-│ ├── All UI rendering                                     │
-│ ├── Input handling                                       │
-│ ├── Inspector property updates                           │
-│ ├── Explorer tree updates                                │
-│ ├── EventBus dispatch                                    │
-│ └── Menu/Toolbar/StatusBar updates                       │
-├──────────────────────────────────────────────────────────┤
-│ Render Thread (Background, 60fps target)                  │
-│ ├── Scene graph traversal                                │
-│ ├── Frustum culling                                      │
-│ ├── Draw calls to renderer backend                       │
-│ ├── Compositing to PixelBuffer                           │
-│ └── Post to UI thread → ViewportPanel.Source = bitmap    │
-├──────────────────────────────────────────────────────────┤
-│ Compute Thread Pool (System.Threading.Tasks)              │
-│ ├── CAS operations (simplify, factor, solve)             │
-│ ├── Numerical computation (integration, root-finding)    │
-│ ├── Simulation stepping                                  │
-│ └── Animation evaluation                                 │
-├──────────────────────────────────────────────────────────┤
-│ I/O Thread (thread pool)                                  │
-│ ├── File save/load                                       │
-│ ├── Serialization/deserialization                        │
-│ └── Export (PNG, SVG, JSON)                              │
-└──────────────────────────────────────────────────────────┘
-
-Communication:
-├── UI ← Render: Dispatcher.Post(() => bitmap = ...)
-├── UI ← Compute: Dispatcher.Post(() => result = ...)
-├── UI → Compute: Task.Run(() => CAS.Evaluate(expr))
-└── UI → I/O: Task.Run(() => SaveWorkspace(doc))
+┌──────────────────────────────────────────────────────────────┐
+│ UI Thread (Avalonia Dispatcher)                               │
+│ Owns:                                                         │
+│ ├── All UI rendering (Avalonia controls)                      │
+│ ├── Input handling (mouse, keyboard)                          │
+│ ├── Explorer (tree view, drag-drop)                           │
+│ ├── Inspector (property editing)                              │
+│ ├── Toolbar (buttons, dropdowns)                              │
+│ ├── Console (input, output, history)                          │
+│ ├── EventBus dispatch                                         │
+│ └── Menu/StatusBar updates                                    │
+│ Forbidden:                                                    │
+│ └── ✗ Never blocks on render or compute                       │
+├──────────────────────────────────────────────────────────────┤
+│ Render Thread (Background, 60fps target)                      │
+│ Owns:                                                         │
+│ ├── Viewport rendering (all pixels)                           │
+│ ├── Grid rendering                                            │
+│ ├── Scene graph traversal                                     │
+│ ├── Frustum culling                                           │
+│ ├── Selection highlight rendering                             │
+│ ├── Camera manipulation                                       │
+│ ├── Draw calls to renderer backend                            │
+│ ├── Compositing to PixelBuffer                                │
+│ └── Post to UI thread → ViewportPanel.Source = bitmap         │
+│ Forbidden:                                                    │
+│ └── ✗ Never accesses workspace objects directly               │
+├──────────────────────────────────────────────────────────────┤
+│ Compute Thread Pool (System.Threading.Tasks)                   │
+│ Owns:                                                         │
+│ ├── CAS operations (simplify, factor, solve, expand)          │
+│ ├── Numerical computation (integration, root-finding, FFT)    │
+│ ├── Symbolic computation (differentiation, series expansion)  │
+│ ├── Simulation stepping (physics engine, particle systems)    │
+│ ├── Graph sampling (compiling expressions to points)          │
+│ ├── Mesh generation (geometry → triangles)                    │
+│ ├── Animation evaluation (keyframe interpolation)             │
+│ └── Dataset processing (statistics, transforms)               │
+│ Forbidden:                                                    │
+│ └── ✗ Never touches UI, renderer state, or I/O                │
+├──────────────────────────────────────────────────────────────┤
+│ I/O Thread (dedicated thread)                                  │
+│ Owns:                                                         │
+│ ├── File save/load (.mathverse project files)                 │
+│ ├── Serialization/deserialization                             │
+│ ├── Export (PNG, SVG, PDF, LaTeX, OBJ, STL)                  │
+│ ├── Import (CSV, images, external formats)                    │
+│ └── Auto-save timer                                           │
+│ Forbidden:                                                    │
+│ └── ✗ Never touches workspace, renderer, or compute state     │
+└──────────────────────────────────────────────────────────────┘
 ```
+
+### 21.1 Cross-Thread Communication
+
+All cross-thread communication goes through the EventBus.
+
+```
+UI Thread → EventBus.Publish()  →  Any thread can observe
+Compute → EventBus.Publish()    →  UI thread observes
+Render → EventBus.Publish()     →  UI thread observes
+I/O → EventBus.Publish()        →  UI thread observes
+```
+
+No direct method calls across threads. No shared mutable state between threads. No locks (except EventBus internals).
+
+### 21.2 Thread Safety Rules
+
+1. UI thread owns all Avalonia controls — never render or compute on UI thread
+2. Render thread owns PixelBuffer — never write to PixelBuffer from other threads
+3. Compute thread pool owns all mathematical computation — never call backend from UI thread
+4. I/O thread owns all file operations — never read/write files from other threads
+5. EventBus is the only cross-thread communication channel
+6. No thread blocks on another — use async patterns
+7. Dispatcher.Post() is the only way to update UI from other threads
 
 ---
 
-## 21. Interaction Model
+## 22. Interaction Model
 
 ### 17.1 Keyboard Shortcuts
 
@@ -1277,7 +1578,7 @@ Right-click on an object shows:
 
 ---
 
-## 22. Accessibility
+## 23. Accessibility
 
 | Requirement | Implementation |
 |-------------|---------------|
@@ -1289,7 +1590,7 @@ Right-click on an object shows:
 
 ---
 
-## 23. Error Handling
+## 24. Error Handling
 
 | Error Type | Presentation |
 |-----------|-------------|
@@ -1304,7 +1605,7 @@ No raw exception messages. No stack traces. Always user-friendly text.
 
 ---
 
-## 24. What Is NOT in Scope (Phase 1)
+## 25. What Is NOT in Scope (Phase 1)
 
 The following are explicitly postponed:
 
@@ -1327,7 +1628,7 @@ The following are explicitly postponed:
 
 ---
 
-## 25. Scalability Assessment
+## 26. Scalability Assessment
 
 | Capability | Can this architecture scale? | What's needed? |
 |-----------|------------------------------|----------------|
@@ -1343,7 +1644,7 @@ The following are explicitly postponed:
 
 ---
 
-## 26. Summary
+## 27. Summary
 
 This architecture produces a professional desktop application that feels like Blender, not a website.
 
@@ -1359,6 +1660,14 @@ This architecture produces a professional desktop application that feels like Bl
 9. Interaction Layer: separates rendering from workspace (Renderer → Viewport → Interaction → Tool → Workspace)
 10. Single renderer with render passes: GridPass, ScenePass, SelectionPass, GizmoPass, OverlayPass
 11. Software renderer first: existing GraphRenderer, OpenGL later
-12. Threading: UI + Render + Compute + I/O
+12. Threading: UI + Render + Compute + I/O (explicit, no cross-thread access)
+13. Dirty flags: StyleDirty, DataDirty, GeometryDirty — no unnecessary recompilation
+14. Compiler cache: expressions, samples, and meshes cached until invalidation
+15. Asset system: reusable resources separate from scene objects
+16. Runtime vs Saved: project files never contain compiled data, GPU buffers, or undo history
+17. UI is a projection of workspace state — panels are disposable, workspace is permanent
+18. Viewport is sacred — never recreated, always alive
+19. Every new object type requires zero UI changes — selection, inspection, duplication, undo are universal
+20. Every user action is a command — commands are the only mutation mechanism
 
 **The foundation supports everything that comes after without architectural changes.**
