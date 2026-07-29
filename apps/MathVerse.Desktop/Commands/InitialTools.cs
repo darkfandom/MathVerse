@@ -83,9 +83,7 @@ public sealed class PanTool : ITool
         _lastY = y;
         if (dx != 0 || dy != 0)
         {
-            var cam = AppServices.ViewportRenderer.Camera;
-            cam.Pan(dx * 5f, dy * 5f);
-            AppServices.ViewportRenderer.Invalidate();
+            AppServices.ViewportRenderer.Pan(dx, dy);
         }
         return true;
     }
@@ -114,9 +112,7 @@ public sealed class ZoomTool : ITool
     public bool OnMouseUp(float x, float y, int button) => false;
     public bool OnWheel(float delta)
     {
-        var cam = AppServices.ViewportRenderer.Camera;
-        cam.Zoom(delta * -0.5f);
-        AppServices.ViewportRenderer.Invalidate();
+        AppServices.ViewportRenderer.ZoomOnCursor(delta, 0.5f, 0.5f);
         return true;
     }
     public bool OnKeyDown(string key) => false;

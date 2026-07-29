@@ -7,6 +7,7 @@
     <!-- Render surface -->
     <Image x:Name="RenderImage" Stretch="Fill" />
 
+    <!-- Overlay layer (independent of scene) -->
     <!-- Selection overlay -->
     <Border x:Name="SelectionRect" IsVisible="False"
             Background="#2D5F8A" Opacity="0.2"
@@ -14,25 +15,41 @@
             CornerRadius="1"
             HorizontalAlignment="Left" VerticalAlignment="Top" />
 
-    <!-- Coordinate display (bottom-left) -->
+    <!-- Top-left: Tool name and status -->
+    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Spacing="2" Margin="4,4,0,0">
+      <Border Background="#1A1A26" Opacity="0.6" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="ToolDisplay" Text="Select" Foreground="#AAA" FontSize="11" />
+      </Border>
+      <Border Background="#1A1A26" Opacity="0.5" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="ModeDisplay" Text="2D View" Foreground="#555" FontSize="10" />
+      </Border>
+    </StackPanel>
+
+    <!-- Top-right: FPS and camera position -->
+    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Spacing="2" Margin="0,4,4,0">
+      <Border Background="#1A1A26" Opacity="0.5" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="FpsDisplay" Text="" Foreground="#555" FontSize="10" />
+      </Border>
+      <Border Background="#1A1A26" Opacity="0.5" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="CamDisplay" Text="" Foreground="#555" FontSize="10" />
+      </Border>
+    </StackPanel>
+
+    <!-- Bottom-left: Cursor coordinates -->
     <Border VerticalAlignment="Bottom" HorizontalAlignment="Left"
             Background="#1A1A26" Opacity="0.7"
             CornerRadius="3" Padding="6,2" Margin="4,0,0,4">
       <TextBlock x:Name="CoordDisplay" Text="(0.00, 0.00)" Foreground="#888" FontSize="11" />
     </Border>
 
-    <!-- Zoom level display (bottom-right) -->
-    <Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
-            Background="#1A1A26" Opacity="0.7"
-            CornerRadius="3" Padding="6,2" Margin="0,0,4,4">
-      <TextBlock x:Name="ZoomDisplay" Text="100%" Foreground="#888" FontSize="11" />
-    </Border>
-
-    <!-- FPS/status (top-right) -->
-    <Border VerticalAlignment="Top" HorizontalAlignment="Right"
-            Background="#1A1A26" Opacity="0.5"
-            CornerRadius="3" Padding="6,2" Margin="0,4,4,0">
-      <TextBlock x:Name="StatusDisplay" Text="" Foreground="#555" FontSize="10" />
-    </Border>
+    <!-- Bottom-right: Zoom level and selection count -->
+    <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Spacing="2" Margin="0,0,4,4">
+      <Border Background="#1A1A26" Opacity="0.7" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="ZoomDisplay" Text="100%" Foreground="#888" FontSize="11" />
+      </Border>
+      <Border Background="#1A1A26" Opacity="0.6" CornerRadius="3" Padding="6,2">
+        <TextBlock x:Name="SelectionDisplay" Text="" Foreground="#888" FontSize="11" />
+      </Border>
+    </StackPanel>
   </Grid>
 </UserControl>

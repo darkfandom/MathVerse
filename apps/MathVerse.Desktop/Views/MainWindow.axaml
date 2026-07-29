@@ -105,8 +105,9 @@
     <!-- Status Bar -->
     <Border Grid.Row="3" Background="#15151E" Height="24" Padding="8,0">
       <Grid ColumnDefinitions="Auto,*,Auto">
-        <TextBlock Grid.Column="0" Text="Objects: 0" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
-        <TextBlock Grid.Column="2" Text="Ready" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+        <TextBlock x:Name="StatusObjectCount" Grid.Column="0" Text="Objects: 0" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+        <TextBlock x:Name="StatusToolName" Grid.Column="1" Text="" Foreground="#666" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock x:Name="StatusMessage" Grid.Column="2" Text="Ready" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
       </Grid>
     </Border>
 

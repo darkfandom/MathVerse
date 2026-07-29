@@ -18,7 +18,10 @@ public partial class ViewportPanel : UserControl
     {
         InitializeComponent();
         AppServices.EventBus.Subscribe(EventType.ObjectSelectionChanged, OnSelectionChanged);
-        AppServices.EventBus.Subscribe(EventType.ToolActivated, _ => UpdateCursor());
+        AppServices.EventBus.Subscribe(EventType.ToolActivated, OnToolActivated);
+
+        // Set up overlay pass to update UI controls
+        AppServices.ViewportRenderer.SetOverlayPass(new OverlayPass(UpdateOverlay));
     }
 
     protected override void OnInitialized()
@@ -59,11 +62,12 @@ public partial class ViewportPanel : UserControl
         base.OnPointerPressed(e);
         Focus();
         var pos = e.GetPosition(this);
-        var normX = (float)(pos.X / Bounds.Width);
-        var normY = (float)(pos.Y / Bounds.Height);
+        var nx = (float)(pos.X / Bounds.Width);
+        var ny = (float)(pos.Y / Bounds.Height);
+        AppServices.ViewportRenderer.SetCursorWorld(nx, ny);
         var props = e.GetCurrentPoint(this).Properties;
         var button = props.IsRightButtonPressed ? 2 : props.IsMiddleButtonPressed ? 1 : 0;
-        AppServices.ToolManager.InvokeMouseDown(normX, normY, button);
+        AppServices.ToolManager.InvokeMouseDown(nx, ny, button);
         e.Handled = true;
     }
 
@@ -71,13 +75,10 @@ public partial class ViewportPanel : UserControl
     {
         base.OnPointerMoved(e);
         var pos = e.GetPosition(this);
-        var normX = (float)(pos.X / Bounds.Width);
-        var normY = (float)(pos.Y / Bounds.Height);
-
-        var world = ScreenToWorld(normX, normY);
-        CoordDisplay.Text = $"({world.X:F2}, {world.Y:F2})";
-
-        AppServices.ToolManager.InvokeMouseMove(normX, normY);
+        var nx = (float)(pos.X / Bounds.Width);
+        var ny = (float)(pos.Y / Bounds.Height);
+        AppServices.ViewportRenderer.SetCursorWorld(nx, ny);
+        AppServices.ToolManager.InvokeMouseMove(nx, ny);
         e.Handled = true;
     }
 
@@ -85,42 +86,36 @@ public partial class ViewportPanel : UserControl
     {
         base.OnPointerReleased(e);
         var pos = e.GetPosition(this);
-        var normX = (float)(pos.X / Bounds.Width);
-        var normY = (float)(pos.Y / Bounds.Height);
+        var nx = (float)(pos.X / Bounds.Width);
+        var ny = (float)(pos.Y / Bounds.Height);
+        AppServices.ViewportRenderer.SetCursorWorld(nx, ny);
         var props = e.GetCurrentPoint(this).Properties;
         var button = props.IsRightButtonPressed ? 2 : props.IsMiddleButtonPressed ? 1 : 0;
-        AppServices.ToolManager.InvokeMouseUp(normX, normY, button);
+        AppServices.ToolManager.InvokeMouseUp(nx, ny, button);
         e.Handled = true;
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         base.OnPointerWheelChanged(e);
-        AppServices.ToolManager.InvokeWheel((float)e.Delta.Y);
+        var pos = e.GetPosition(this);
+        var nx = (float)(pos.X / Bounds.Width);
+        var ny = (float)(pos.Y / Bounds.Height);
+        AppServices.ViewportRenderer.ZoomOnCursor((float)e.Delta.Y, nx, ny);
         e.Handled = true;
     }
 
-    private Vector2 ScreenToWorld(float nx, float ny)
+    private void OnToolActivated(EventData data)
     {
-        float ndcX = nx * 2f - 1f;
-        float ndcY = 1f - ny * 2f;
-        if (Matrix4x4.Invert(AppServices.ViewportRenderer.Camera.ViewProjectionMatrix, out var inv))
-        {
-            var clip = Vector4.Transform(new Vector4(ndcX, ndcY, 0, 1), inv);
-            if (System.Math.Abs(clip.W) > 0.0001f)
-            {
-                clip.X /= clip.W;
-                clip.Y /= clip.W;
-            }
-            return new Vector2(clip.X, clip.Y);
-        }
-        return Vector2.Zero;
+        Dispatcher.UIThread.Post(() => UpdateCursor());
     }
 
     private void UpdateCursor()
     {
         var tool = AppServices.ToolManager.ActiveTool;
-        Cursor = tool?.Name switch
+        var name = tool?.Name ?? "SelectTool";
+        AppServices.ViewportRenderer.SetToolName(name);
+        Cursor = name switch
         {
             "PanTool" => new Cursor(StandardCursorType.Hand),
             "ZoomTool" => new Cursor(StandardCursorType.SizeAll),
@@ -128,12 +123,22 @@ public partial class ViewportPanel : UserControl
         };
     }
 
+    private void UpdateOverlay(OverlayPass.OverlayData data)
+    {
+        CoordDisplay.Text = data.Coordinates;
+        ZoomDisplay.Text = data.ZoomLevel;
+        ToolDisplay.Text = data.ActiveTool;
+        FpsDisplay.Text = data.Fps + " FPS";
+        CamDisplay.Text = data.CameraPos;
+        SelectionDisplay.Text = data.SelectionInfo;
+    }
+
     private void OnSelectionChanged(EventData data)
     {
         Dispatcher.UIThread.Post(() =>
         {
             var count = AppServices.SelectionManager.Count;
-            SelectionRect.IsVisible = count > 0;
+            SelectionDisplay.Text = count > 0 ? $"{count} selected" : "";
         });
     }
 }

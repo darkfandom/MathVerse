@@ -44,5 +44,7 @@ public static class AppServices
         ToolManager.Register(new SelectTool());
         ToolManager.Register(new PanTool());
         ToolManager.Register(new ZoomTool());
+        ToolManager.SetActive("SelectTool");
+        ViewportRenderer.SetToolName("SelectTool");
     }
 }

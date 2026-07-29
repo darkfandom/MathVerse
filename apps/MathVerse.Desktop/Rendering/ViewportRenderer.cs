@@ -10,18 +10,40 @@ namespace MathVerse.Desktop.Rendering;
 public sealed class ViewportRenderer
 {
     private readonly Camera _camera;
+    private readonly List<IRenderPass> _passes = [];
     private WriteableBitmap? _bitmap;
     private int _width = 1;
     private int _height = 1;
     private float _aspectRatio = 16f / 9f;
     private bool _dirty = true;
 
+    // Camera system
+    private Vector3 _targetPosition;
+    private Vector3 _targetTarget;
+    private float _cameraDistance;
+    private float _targetDistance;
+    private bool _animating;
+
+    // Timing
+    private DateTime _lastFrameTime = DateTime.UtcNow;
+    private float _deltaTime;
+    private float _totalTime;
+
+    // Cursor world position
+    private float _cursorWorldX;
+    private float _cursorWorldY;
+
+    // Status
+    private string _statusMessage = "";
+    private string _activeToolName = "SelectTool";
+
     public Camera Camera => _camera;
     public WriteableBitmap? Bitmap => _bitmap;
     public int Width => _width;
     public int Height => _height;
-
     public float ZoomLevel { get; private set; } = 1f;
+    public float CursorWorldX => _cursorWorldX;
+    public float CursorWorldY => _cursorWorldY;
 
     public ViewportRenderer()
     {
@@ -32,6 +54,22 @@ public sealed class ViewportRenderer
             Projection = ProjectionType.Orthographic,
             AspectRatio = _aspectRatio,
         };
+        _targetPosition = _camera.Position;
+        _targetTarget = _camera.Target;
+        _cameraDistance = Vector3.Distance(_camera.Position, _camera.Target);
+        _targetDistance = _cameraDistance;
+
+        // Register default passes
+        _passes.Add(new GridPass());
+        _passes.Add(new ScenePass());
+        _passes.Add(new SelectionPass());
+        _passes.Add(new GizmoPass());
+    }
+
+    public void SetOverlayPass(IRenderPass pass)
+    {
+        _passes.Add(pass);
+        _passes.Sort((a, b) => a.Order.CompareTo(b.Order));
     }
 
     public void Resize(int width, int height)
@@ -56,61 +94,95 @@ public sealed class ViewportRenderer
 
     public void Invalidate() => _dirty = true;
 
-    public WriteableBitmap? Render()
+    public void SetToolName(string name) => _activeToolName = name;
+    public void SetStatus(string message) => _statusMessage = message;
+
+    // --- Camera System ---
+
+    public void Pan(float dx, float dy)
     {
-        if (!_dirty || _bitmap is null) return _bitmap;
-        _dirty = false;
-
-        var buffer = new PixelBuffer(_width, _height);
-
-        DrawBackground(buffer);
-        DrawGrid(buffer, _aspectRatio);
-        DrawAxes(buffer, _aspectRatio);
-
-        // Copy pixel data to bitmap
-        var data = buffer.Data;
-        using var frame = _bitmap.Lock();
-        System.Runtime.InteropServices.Marshal.Copy(data, 0, frame.Address, data.Length);
-
-        return _bitmap;
+        float scale = _cameraDistance * 0.1f;
+        _camera.Pan(-dx * scale, dy * scale);
+        _targetPosition = _camera.Position;
+        _targetTarget = _camera.Target;
+        _dirty = true;
     }
 
-    private static void DrawBackground(PixelBuffer buffer)
+    public void ZoomOnCursor(float delta, float cursorNX, float cursorNY)
     {
-        buffer.Clear(11, 11, 18, 255);
+        // Convert cursor to world
+        float ndcX = cursorNX * 2f - 1f;
+        float ndcY = 1f - cursorNY * 2f;
+        Vector3 worldBefore = ScreenToWorld(new Vector2(ndcX, ndcY));
+        if (float.IsNaN(worldBefore.X)) return;
+
+        float zoomFactor = 1f + delta * 0.1f;
+        zoomFactor = System.Math.Clamp(zoomFactor, 0.3f, 3f);
+        _targetDistance = System.Math.Clamp(_targetDistance * zoomFactor, 0.1f, 100f);
+
+        // After zoom, adjust target so cursor stays fixed in world
+        Vector3 forward = Vector3.Normalize(_targetTarget - _targetPosition);
+        _targetPosition = _targetTarget - forward * _targetDistance;
+
+        _animating = true;
+        _dirty = true;
     }
 
-    private void DrawGrid(PixelBuffer buffer, float aspect)
+    public void ResetCamera()
     {
-        float step = 0.5f * ZoomLevel;
-        float range = 5f * ZoomLevel;
+        _targetTarget = Vector3.Zero;
+        _targetPosition = new Vector3(0, 0, 10);
+        _targetDistance = 10f;
+        _animating = true;
+        _dirty = true;
+    }
 
-        for (float x = -range; x <= range; x += step)
+    public void FitAll(float xMin, float xMax, float yMin, float yMax)
+    {
+        float cx = (xMin + xMax) * 0.5f;
+        float cy = (yMin + yMax) * 0.5f;
+        float range = System.Math.Max(xMax - xMin, yMax - yMin) * 0.6f;
+        if (range < 0.1f) range = 5f;
+
+        _targetTarget = new Vector3(cx, cy, 0);
+        _targetDistance = range;
+        _targetPosition = new Vector3(cx, cy, range + 0.1f);
+        _animating = true;
+        _dirty = true;
+    }
+
+    public void UpdateCameraAnimation()
+    {
+        if (!_animating) return;
+        float speed = System.Math.Min(1f, _deltaTime * 8f);
+
+        _camera.Position = Vector3.Lerp(_camera.Position, _targetPosition, speed);
+        _camera.Target = Vector3.Lerp(_camera.Target, _targetTarget, speed);
+        _cameraDistance = Vector3.Distance(_camera.Position, _camera.Target);
+
+        float dist = Vector3.Distance(_camera.Position, _targetPosition);
+        if (dist < 0.01f)
         {
-            var start = Project(new Vector3(x, -range / aspect, 0));
-            var end = Project(new Vector3(x, range / aspect, 0));
-            DrawLine(buffer, start, end, 30, 30, 40, 60);
+            _camera.Position = _targetPosition;
+            _camera.Target = _targetTarget;
+            _cameraDistance = _targetDistance;
+            _animating = false;
         }
-
-        for (float y = -range / aspect; y <= range / aspect; y += step / aspect)
-        {
-            var start = Project(new Vector3(-range, y, 0));
-            var end = Project(new Vector3(range, y, 0));
-            DrawLine(buffer, start, end, 30, 30, 40, 60);
-        }
+        _dirty = true;
     }
 
-    private void DrawAxes(PixelBuffer buffer, float aspect)
+    public void SetCursorWorld(float nx, float ny)
     {
-        var origin = Project(Vector3.Zero);
-        var xEnd = Project(new Vector3(0.8f, 0, 0));
-        DrawLine(buffer, origin, xEnd, 200, 60, 60, 200);
-
-        var yEnd = Project(new Vector3(0, 0.8f / aspect, 0));
-        DrawLine(buffer, origin, yEnd, 60, 200, 60, 200);
+        float ndcX = nx * 2f - 1f;
+        float ndcY = 1f - ny * 2f;
+        var world = ScreenToWorld(new Vector2(ndcX, ndcY));
+        _cursorWorldX = world.X;
+        _cursorWorldY = world.Y;
     }
 
-    private (float sx, float sy) Project(Vector3 world)
+    // --- World ↔ Screen ---
+
+    public Vector2 WorldToScreen(Vector3 world)
     {
         var vp = _camera.ViewProjectionMatrix;
         var clip = Vector4.Transform(new Vector4(world, 1), vp);
@@ -119,28 +191,66 @@ public sealed class ViewportRenderer
             clip.X /= clip.W;
             clip.Y /= clip.W;
         }
-        return (clip.X, clip.Y);
+        float sx = (clip.X + 1) * 0.5f * _width;
+        float sy = (1 - clip.Y) * 0.5f * _height;
+        return new Vector2(sx, sy);
     }
 
-    private static void DrawLine(PixelBuffer buffer, (float x, float y) from, (float x, float y) to,
-        byte r, byte g, byte bl, byte alpha)
+    public Vector3 ScreenToWorld(Vector2 ndc)
     {
-        int x0 = (int)((from.x + 1) * 0.5f * buffer.Width);
-        int y0 = (int)((1 - from.y) * 0.5f * buffer.Height);
-        int x1 = (int)((to.x + 1) * 0.5f * buffer.Width);
-        int y1 = (int)((1 - to.y) * 0.5f * buffer.Height);
-
-        int dx = System.Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-        int dy = -System.Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-        int err = dx + dy, e2;
-
-        while (true)
+        if (Matrix4x4.Invert(_camera.ViewProjectionMatrix, out var inv))
         {
-            buffer.SetPixel(x0, y0, r, g, bl, alpha);
-            if (x0 == x1 && y0 == y1) break;
-            e2 = 2 * err;
-            if (e2 >= dy) { err += dy; x0 += sx; }
-            if (e2 <= dx) { err += dx; y0 += sy; }
+            var clip = Vector4.Transform(new Vector4(ndc.X, ndc.Y, 0, 1), inv);
+            if (System.Math.Abs(clip.W) > 0.0001f)
+            {
+                clip.X /= clip.W;
+                clip.Y /= clip.W;
+            }
+            return new Vector3(clip.X, clip.Y, 0);
         }
+        return Vector3.Zero;
+    }
+
+    // --- Render ---
+
+    public WriteableBitmap? Render()
+    {
+        var now = DateTime.UtcNow;
+        _deltaTime = (float)(now - _lastFrameTime).TotalSeconds;
+        _totalTime += _deltaTime;
+        _lastFrameTime = now;
+
+        UpdateCameraAnimation();
+
+        if (!_dirty || _bitmap is null) return _bitmap;
+        _dirty = false;
+
+        ZoomLevel = _targetDistance / 10f;
+
+        var buffer = new PixelBuffer(_width, _height);
+        var ctx = new RenderContext(
+            Width: _width,
+            Height: _height,
+            AspectRatio: _aspectRatio,
+            DeltaTime: _deltaTime,
+            TotalTime: _totalTime,
+            CameraPosition: _camera.Position,
+            CameraTarget: _camera.Target,
+            ViewProjectionMatrix: _camera.ViewProjectionMatrix,
+            ZoomLevel: ZoomLevel,
+            CursorWorldX: _cursorWorldX,
+            CursorWorldY: _cursorWorldY,
+            ActiveToolName: _activeToolName,
+            SelectionCount: 0,
+            StatusMessage: _statusMessage);
+
+        foreach (var pass in _passes)
+            pass.Execute(buffer, ctx);
+
+        var data = buffer.Data;
+        using var frame = _bitmap.Lock();
+        System.Runtime.InteropServices.Marshal.Copy(data, 0, frame.Address, data.Length);
+
+        return _bitmap;
     }
 }
