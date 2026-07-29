@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MathVerse.Desktop.ExplorerPanel">
+  <Border Background="#13131E">
+    <Grid RowDefinitions="28,*">
+      <Border Grid.Row="0" Background="#1A1A26" BorderBrush="#222" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="*,Auto" Margin="8,0">
+          <TextBlock Grid.Column="0" Text="EXPLORER" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="&#x25BE;" Foreground="#555" FontSize="10" VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <TextBlock x:Name="EmptyState" Grid.Row="1"
+                 Text="No objects yet" Foreground="#444" FontSize="13"
+                 HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="True" />
+
+      <ScrollViewer x:Name="ObjectScroller" Grid.Row="1" IsVisible="False" Background="Transparent">
+        <StackPanel x:Name="ObjectContainer" Spacing="1" Margin="0,2,0,0" />
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>

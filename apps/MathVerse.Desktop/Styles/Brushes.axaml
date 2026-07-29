@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Solid Brushes -->
+  <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{StaticResource BackgroundDark}" />
+  <SolidColorBrush x:Key="BackgroundPanelBrush" Color="{StaticResource BackgroundPanel}" />
+  <SolidColorBrush x:Key="BackgroundHeaderBrush" Color="{StaticResource BackgroundHeader}" />
+  <SolidColorBrush x:Key="BackgroundBarBrush" Color="{StaticResource BackgroundBar}" />
+  <SolidColorBrush x:Key="BackgroundInputBrush" Color="{StaticResource BackgroundInput}" />
+
+  <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
+  <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+  <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+
+  <SolidColorBrush x:Key="BorderDefaultBrush" Color="{StaticResource BorderDefault}" />
+  <SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}" />
+
+  <SolidColorBrush x:Key="AccentBlueBrush" Color="{StaticResource AccentBlue}" />
+  <SolidColorBrush x:Key="AccentGreenBrush" Color="{StaticResource AccentGreen}" />
+  <SolidColorBrush x:Key="AccentRedBrush" Color="{StaticResource AccentRed}" />
+  <SolidColorBrush x:Key="AccentOrangeBrush" Color="{StaticResource AccentOrange}" />
+
+  <SolidColorBrush x:Key="SelectionActiveBrush" Color="{StaticResource SelectionActive}" />
+  <SolidColorBrush x:Key="SelectionInactiveBrush" Color="{StaticResource SelectionInactive}" />
+</ResourceDictionary>

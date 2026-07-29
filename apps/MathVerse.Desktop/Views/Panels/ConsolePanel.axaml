@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MathVerse.Desktop.ConsolePanel">
+  <Border Background="#13131E" BorderBrush="#222" BorderThickness="0,0,0,0">
+    <Grid RowDefinitions="24,*">
+      <Border Grid.Row="0" Background="#1A1A26" BorderBrush="#222" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="*,Auto" Margin="8,0">
+          <TextBlock Grid.Column="0" Text="CONSOLE" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="&#x25BE;" Foreground="#555" FontSize="10" VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+      <ScrollViewer Grid.Row="1" Background="#0F0F18" Padding="8,4">
+        <TextBlock Text="" Foreground="#888" FontSize="12" />
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>

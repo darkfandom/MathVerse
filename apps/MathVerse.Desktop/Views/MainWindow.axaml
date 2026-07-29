@@ -1,9 +1,115 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:panels="clr-namespace:MathVerse.Desktop"
         x:Class="MathVerse.Desktop.MainWindow"
         Title="MathVerse"
         Width="1400" Height="900"
         MinWidth="1024" MinHeight="768"
         Background="#0B0B12"
-        WindowStartupLocation="CenterScreen"/>
+        WindowStartupLocation="CenterScreen">
 
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+    <!-- Menu Bar -->
+    <Menu Grid.Row="0" Background="#15151E" Foreground="#E0E0E0" Height="30">
+      <MenuItem Header="_File">
+        <MenuItem Header="_New Workspace" />
+        <MenuItem Header="_Open..." />
+        <Separator />
+        <MenuItem Header="_Save" />
+        <MenuItem Header="Save _As..." />
+        <Separator />
+        <MenuItem Header="_Export" />
+        <Separator />
+        <MenuItem Header="_Exit" />
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Header="_Undo" />
+        <MenuItem Header="_Redo" />
+        <Separator />
+        <MenuItem Header="_Cut" />
+        <MenuItem Header="_Copy" />
+        <MenuItem Header="_Paste" />
+        <MenuItem Header="_Delete" />
+        <Separator />
+        <MenuItem Header="Select _All" />
+      </MenuItem>
+      <MenuItem Header="_View">
+        <MenuItem Header="_Zoom In" />
+        <MenuItem Header="Z_oom Out" />
+        <MenuItem Header="_Fit to Window" />
+      </MenuItem>
+      <MenuItem Header="_Insert">
+        <MenuItem Header="_Expression" />
+        <MenuItem Header="_Graph" />
+        <MenuItem Header="_Surface" />
+        <MenuItem Header="_Geometry" />
+        <MenuItem Header="_Dataset" />
+      </MenuItem>
+      <MenuItem Header="_Help">
+        <MenuItem Header="_Keyboard Shortcuts" />
+        <Separator />
+        <MenuItem Header="_About MathVerse" />
+      </MenuItem>
+    </Menu>
+
+    <!-- Toolbar -->
+    <Border Grid.Row="1" Background="#1A1A26" Height="36" Padding="6,0">
+      <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+        <Button Content="+ Expression" FontSize="12" Height="26" />
+        <Button Content="+ Graph" FontSize="12" Height="26" />
+        <Button Content="+ Surface" FontSize="12" Height="26" />
+        <Rectangle Width="1" Fill="#333" Margin="4,0" />
+        <Button Content="Select" FontSize="12" Height="26" />
+        <Button Content="Pan" FontSize="12" Height="26" />
+        <Button Content="Zoom" FontSize="12" Height="26" />
+        <Rectangle Width="1" Fill="#333" Margin="4,0" />
+        <Button Content="Fit" FontSize="12" Height="26" Width="40" />
+        <Button Content="3D" FontSize="12" Height="26" Width="40" />
+      </StackPanel>
+    </Border>
+
+    <!-- Main Content: 3-column layout with bottom console -->
+    <Grid Grid.Row="2" ColumnDefinitions="220,5,*,5,280" RowDefinitions="*,5,140">
+
+      <!-- Explorer (left) -->
+      <panels:ExplorerPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" />
+
+      <!-- Vertical Splitter 1 -->
+      <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
+                    Width="5" Background="Transparent"
+                    BorderThickness="0"
+                    BorderBrush="Transparent" />
+
+      <!-- Center column: Viewport + Console -->
+      <Grid Grid.Column="2" RowDefinitions="*,5,140">
+
+        <!-- Viewport -->
+        <panels:ViewportPanel Grid.Row="0" />
+
+        <!-- Horizontal Splitter -->
+        <GridSplitter Grid.Row="1" Height="5" Background="Transparent" />
+
+        <!-- Console -->
+        <panels:ConsolePanel Grid.Row="2" />
+      </Grid>
+
+      <!-- Vertical Splitter 2 -->
+      <GridSplitter Grid.Column="3" Grid.Row="0" Grid.RowSpan="3"
+                    Width="5" Background="Transparent" />
+
+      <!-- Inspector (right) -->
+      <panels:InspectorPanel Grid.Column="4" Grid.Row="0" Grid.RowSpan="3" />
+    </Grid>
+
+    <!-- Status Bar -->
+    <Border Grid.Row="3" Background="#15151E" Height="24" Padding="8,0">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <TextBlock Grid.Column="0" Text="Objects: 0" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="2" Text="Ready" Foreground="#888" FontSize="11" VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+
+  </Grid>
+
+</Window>
