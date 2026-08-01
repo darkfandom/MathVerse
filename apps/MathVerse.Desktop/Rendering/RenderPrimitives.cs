@@ -1,4 +1,5 @@
 using System.Numerics;
+using static MathVerse.Desktop.Rendering.HitTestHelpers;
 using PixelBuffer = MathVerse.Math.Visualization.Export.PixelBuffer;
 
 namespace MathVerse.Desktop.Rendering;
@@ -42,6 +43,21 @@ public sealed class RenderLine : IRenderObject
         var from = Project(vp, new Vector3(Start.X, Start.Y, 0));
         var to = Project(vp, new Vector3(End.X, End.Y, 0));
         DrawBresenham(buffer, from, to, Color.R, Color.G, Color.B, Color.A);
+    }
+
+    public float HitTest(float wx, float wy)
+    {
+        return PointToLineDistance(wx, wy, Start.X, Start.Y, End.X, End.Y);
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        return IsPointInBox(Start.X, Start.Y, minX, maxX, minY, maxY) ||
+               IsPointInBox(End.X, End.Y, minX, maxX, minY, maxY) ||
+               LineIntersectsLine(Start.X, Start.Y, End.X, End.Y, minX, minY, maxX, minY) ||
+               LineIntersectsLine(Start.X, Start.Y, End.X, End.Y, maxX, minY, maxX, maxY) ||
+               LineIntersectsLine(Start.X, Start.Y, End.X, End.Y, minX, minY, minX, maxY) ||
+               LineIntersectsLine(Start.X, Start.Y, End.X, End.Y, minX, maxY, maxX, maxY);
     }
 
     private static (float sx, float sy) Project(Matrix4x4 vp, Vector3 world)
@@ -120,6 +136,39 @@ public sealed class RenderPolyline : IRenderObject
         }
     }
 
+    public float HitTest(float wx, float wy)
+    {
+        float minDist = 0.3f;
+        for (int i = 1; i < Points.Length; i++)
+            minDist = System.Math.Min(minDist, PointToLineDistance(wx, wy, Points[i - 1].X, Points[i - 1].Y, Points[i].X, Points[i].Y));
+        if (Closed && Points.Length > 2)
+            minDist = System.Math.Min(minDist, PointToLineDistance(wx, wy, Points[^1].X, Points[^1].Y, Points[0].X, Points[0].Y));
+        return minDist;
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        for (int i = 1; i < Points.Length; i++)
+            if (LineIntersectsBox(Points[i - 1].X, Points[i - 1].Y, Points[i].X, Points[i].Y, minX, maxX, minY, maxY))
+                return true;
+        if (Closed && Points.Length > 2)
+            if (LineIntersectsBox(Points[^1].X, Points[^1].Y, Points[0].X, Points[0].Y, minX, maxX, minY, maxY))
+                return true;
+        return false;
+    }
+
+    private static bool LineIntersectsBox(float x1, float y1, float x2, float y2,
+        float bMinX, float bMaxX, float bMinY, float bMaxY)
+    {
+        if (IsPointInBox(x1, y1, bMinX, bMaxX, bMinY, bMaxY) ||
+            IsPointInBox(x2, y2, bMinX, bMaxX, bMinY, bMaxY))
+            return true;
+        return LineIntersectsLine(x1, y1, x2, y2, bMinX, bMinY, bMaxX, bMinY) ||
+               LineIntersectsLine(x1, y1, x2, y2, bMaxX, bMinY, bMaxX, bMaxY) ||
+               LineIntersectsLine(x1, y1, x2, y2, bMinX, bMinY, bMinX, bMaxY) ||
+               LineIntersectsLine(x1, y1, x2, y2, bMinX, bMaxY, bMaxX, bMaxY);
+    }
+
     private static (float sx, float sy) Project(Matrix4x4 vp, Vector3 world)
     {
         var clip = Vector4.Transform(new Vector4(world, 1), vp);
@@ -160,6 +209,16 @@ public sealed class RenderText : IRenderObject
     {
         if (!IsVisible || IsHidden || string.IsNullOrEmpty(Text)) return;
         // Text rendering requires font rasterization — deferred
+    }
+
+    public float HitTest(float wx, float wy)
+    {
+        return PointToLineDistance(wx, wy, Position.X, Position.Y, Position.X, Position.Y);
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        return IsPointInBox(Position.X, Position.Y, minX, maxX, minY, maxY);
     }
 }
 
@@ -202,6 +261,16 @@ public sealed class RenderPoint : IRenderObject
             for (int dx = -r; dx <= r; dx++)
                 if (dx * dx + dy * dy <= r * r)
                     buffer.SetPixel(px + dx, py + dy, Color.R, Color.G, Color.B, Color.A);
+    }
+
+    public float HitTest(float wx, float wy)
+    {
+        return PointToLineDistance(wx, wy, Position.X, Position.Y, Position.X, Position.Y);
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        return IsPointInBox(Position.X, Position.Y, minX, maxX, minY, maxY);
     }
 }
 
@@ -273,6 +342,18 @@ public sealed class RenderRectangle : IRenderObject
             buffer.SetPixel(x1, y, StrokeColor.R, StrokeColor.G, StrokeColor.B, StrokeColor.A);
         }
     }
+
+    public float HitTest(float wx, float wy)
+    {
+        if (wx >= Min.X && wx <= Max.X && wy >= Min.Y && wy <= Max.Y) return 0f;
+        float cx = (Min.X + Max.X) / 2f, cy = (Min.Y + Max.Y) / 2f;
+        return (float)System.Math.Sqrt((wx - cx) * (wx - cx) + (wy - cy) * (wy - cy));
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        return Min.X <= maxX && Max.X >= minX && Min.Y <= maxY && Max.Y >= minY;
+    }
 }
 
 public sealed class RenderCircle : IRenderObject
@@ -336,5 +417,49 @@ public sealed class RenderCircle : IRenderObject
             buffer.SetPixel(cx + dx, cy + dy, StrokeColor.R, StrokeColor.G, StrokeColor.B, StrokeColor.A);
             buffer.SetPixel(cx - dx, cy + dy, StrokeColor.R, StrokeColor.G, StrokeColor.B, StrokeColor.A);
         }
+    }
+
+    public float HitTest(float wx, float wy)
+    {
+        return (float)System.Math.Abs(System.Math.Sqrt((wx - Center.X) * (wx - Center.X) + (wy - Center.Y) * (wy - Center.Y)) - Radius);
+    }
+
+    public bool IntersectsBox(float minX, float maxX, float minY, float maxY)
+    {
+        float closestX = System.Math.Clamp(Center.X, minX, maxX);
+        float closestY = System.Math.Clamp(Center.Y, minY, maxY);
+        float dx = Center.X - closestX, dy = Center.Y - closestY;
+        return (dx * dx + dy * dy) <= (Radius * Radius);
+    }
+}
+
+internal static class HitTestHelpers
+{
+    public static float PointToLineDistance(float px, float py, float x1, float y1, float x2, float y2)
+    {
+        float dx = x2 - x1, dy = y2 - y1;
+        float lenSq = dx * dx + dy * dy;
+        if (lenSq < 0.0001f) return Distance(px, py, x1, y1);
+        float t = System.Math.Clamp(((px - x1) * dx + (py - y1) * dy) / lenSq, 0f, 1f);
+        return Distance(px, py, x1 + t * dx, y1 + t * dy);
+    }
+
+    public static float Distance(float x1, float y1, float x2, float y2)
+    {
+        float dx = x2 - x1, dy = y2 - y1;
+        return System.MathF.Sqrt(dx * dx + dy * dy);
+    }
+
+    public static bool IsPointInBox(float x, float y, float minX, float maxX, float minY, float maxY) =>
+        x >= minX && x <= maxX && y >= minY && y <= maxY;
+
+    public static bool LineIntersectsLine(float x1, float y1, float x2, float y2,
+        float x3, float y3, float x4, float y4)
+    {
+        float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        if (System.Math.Abs(d) < 0.0001f) return false;
+        float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / d;
+        float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / d;
+        return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
 }

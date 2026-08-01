@@ -1,4 +1,5 @@
 using MathVerse.Desktop.Models;
+using MathVerse.Desktop.Services;
 
 namespace MathVerse.Desktop.Core;
 
@@ -14,7 +15,7 @@ public readonly record struct CommandContext(
     Workspace Workspace,
     ObjectRegistry Registry,
     EventBus EventBus,
-    SelectionManager Selection,
+    SelectionService Selection,
     IReadOnlyList<Guid> SelectedIds,
     Guid? ActiveToolId,
     Dictionary<string, object>? Parameters = null);
@@ -42,7 +43,7 @@ public sealed class CommandManager
     private readonly Workspace _workspace;
     private readonly ObjectRegistry _objectRegistry;
     private readonly EventBus _eventBus;
-    private readonly SelectionManager _selection;
+    private readonly SelectionService _selection;
     private readonly List<CommandRecord> _history = [];
 
     public IReadOnlyList<CommandRecord> History => _history.AsReadOnly();
@@ -53,7 +54,7 @@ public sealed class CommandManager
         Workspace workspace,
         ObjectRegistry objectRegistry,
         EventBus eventBus,
-        SelectionManager selection)
+        SelectionService selection)
     {
         _registry = registry;
         _workspace = workspace;

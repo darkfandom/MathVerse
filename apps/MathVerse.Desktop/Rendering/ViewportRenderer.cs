@@ -37,6 +37,9 @@ public sealed class ViewportRenderer
     private string _statusMessage = "";
     private string _activeToolName = "SelectTool";
 
+    // Selection box (set by SelectTool during drag)
+    public (float x, float y, float w, float h)? SelectionBox { get; private set; }
+
     public Camera Camera => _camera;
     public WriteableBitmap? Bitmap => _bitmap;
     public int Width => _width;
@@ -96,6 +99,8 @@ public sealed class ViewportRenderer
 
     public void SetToolName(string name) => _activeToolName = name;
     public void SetStatus(string message) => _statusMessage = message;
+    public void SetSelectionBox(float x, float y, float w, float h) { SelectionBox = (x, y, w, h); Invalidate(); }
+    public void ClearSelectionBox() { SelectionBox = null; Invalidate(); }
 
     // --- Camera System ---
 
@@ -241,8 +246,9 @@ public sealed class ViewportRenderer
             CursorWorldX: _cursorWorldX,
             CursorWorldY: _cursorWorldY,
             ActiveToolName: _activeToolName,
-            SelectionCount: 0,
-            StatusMessage: _statusMessage);
+            SelectionCount: Services.AppServices.SelectionService.Count,
+            StatusMessage: _statusMessage,
+            SelectionBox: SelectionBox);
 
         foreach (var pass in _passes)
             pass.Execute(buffer, ctx);

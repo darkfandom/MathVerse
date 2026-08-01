@@ -7,6 +7,10 @@ public enum EventType
     ObjectCreated,
     ObjectDeleted,
     ObjectSelectionChanged,
+    SelectionBegin,
+    SelectionChanging,
+    SelectionCommitted,
+    SelectionCancelled,
     ObjectPropertyChanged,
     ViewportCameraChanged,
     CommandExecuted,
@@ -14,7 +18,9 @@ public enum EventType
     RedoPerformed,
     WorkspaceModeChanged,
     ToolActivated,
-    ToolDeactivated
+    ToolDeactivated,
+    HoveredObjectChanged,
+    ActiveObjectChanged,
 }
 
 public readonly record struct EventData(

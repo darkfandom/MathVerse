@@ -1,8 +1,8 @@
 using System.Linq;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Threading;
 using MathVerse.Desktop.Core;
 using MathVerse.Desktop.Models;
 using MathVerse.Desktop.Services;
@@ -29,11 +29,13 @@ public partial class ExplorerPanel : UserControl
         bus.Subscribe(EventType.ObjectCreated, _ => Rebuild());
         bus.Subscribe(EventType.ObjectDeleted, _ => Rebuild());
         bus.Subscribe(EventType.ObjectPropertyChanged, _ => Rebuild());
+        bus.Subscribe(EventType.ObjectSelectionChanged, _ => UpdateSelectionHighlight());
+        bus.Subscribe(EventType.ActiveObjectChanged, _ => UpdateSelectionHighlight());
     }
 
     private void Rebuild()
     {
-        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             ObjectContainer.Children.Clear();
             var objects = AppServices.Registry.GetAll().ToList();
@@ -74,6 +76,8 @@ public partial class ExplorerPanel : UserControl
     private Border CreateObjectRow(IWorkspaceObject obj)
     {
         var color = TypeColors.GetValueOrDefault(obj.TypeTag, Color.FromRgb(0x78, 0x90, 0x9C));
+        var isSelected = AppServices.SelectionService.IsSelected(obj.Id);
+        var isActive = AppServices.SelectionService.ActiveObjectId == obj.Id;
 
         var dot = new Avalonia.Controls.Shapes.Ellipse
         {
@@ -88,7 +92,7 @@ public partial class ExplorerPanel : UserControl
         {
             Text = obj.Name,
             FontSize = 12,
-            Foreground = new SolidColorBrush(Color.FromRgb(0xCC, 0xCC, 0xCC)),
+            Foreground = new SolidColorBrush(isActive ? Color.FromRgb(0xFF, 0xFF, 0xFF) : Color.FromRgb(0xCC, 0xCC, 0xCC)),
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
             Margin = new Avalonia.Thickness(6, 0, 0, 0),
         };
@@ -116,20 +120,37 @@ public partial class ExplorerPanel : UserControl
         grid.Children.Add(visBtn);
         grid.Children.Add(delBtn);
 
+        var bg = isSelected
+            ? (IBrush)new SolidColorBrush(Color.FromRgb(0x2D, 0x5F, 0x8A))
+            : Brushes.Transparent;
+
         var row = new Border
         {
             Padding = new Avalonia.Thickness(4, 2),
-            Background = Brushes.Transparent,
+            Background = bg,
             Child = grid,
         };
 
         row.PointerPressed += (_, e) =>
         {
-            AppServices.SelectionManager.SetSelection(obj.Id);
-            row.Background = new SolidColorBrush(Color.FromRgb(0x2D, 0x5F, 0x8A));
+            var modifiers = e.KeyModifiers;
+            if (modifiers.HasFlag(KeyModifiers.Control))
+                AppServices.CommandManager.Execute("ToggleSelectObject",
+                    new Dictionary<string, object> { ["ObjectId"] = obj.Id });
+            else if (modifiers.HasFlag(KeyModifiers.Shift))
+                AppServices.CommandManager.Execute("ToggleSelectObject",
+                    new Dictionary<string, object> { ["ObjectId"] = obj.Id });
+            else
+                AppServices.CommandManager.Execute("SelectObject",
+                    new Dictionary<string, object> { ["ObjectId"] = obj.Id });
         };
 
         return row;
+    }
+
+    private void UpdateSelectionHighlight()
+    {
+        Dispatcher.UIThread.Post(() => Rebuild());
     }
 
     private Border CreateIconButton(string text, string color, Action onClick)
@@ -162,6 +183,8 @@ public partial class ExplorerPanel : UserControl
     {
         AppServices.Registry.Remove(obj.Id);
         AppServices.Workspace.RemoveObject(obj.Id);
+        if (AppServices.SelectionService.IsSelected(obj.Id))
+            AppServices.SelectionService.Deselect(obj.Id);
         AppServices.EventBus.Publish(new EventData(EventType.ObjectDeleted, obj.Id));
     }
 }

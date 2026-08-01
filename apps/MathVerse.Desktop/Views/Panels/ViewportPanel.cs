@@ -18,6 +18,7 @@ public partial class ViewportPanel : UserControl
     {
         InitializeComponent();
         AppServices.EventBus.Subscribe(EventType.ObjectSelectionChanged, OnSelectionChanged);
+        AppServices.EventBus.Subscribe(EventType.ActiveObjectChanged, OnSelectionChanged);
         AppServices.EventBus.Subscribe(EventType.ToolActivated, OnToolActivated);
 
         // Set up overlay pass to update UI controls
@@ -67,6 +68,12 @@ public partial class ViewportPanel : UserControl
         AppServices.ViewportRenderer.SetCursorWorld(nx, ny);
         var props = e.GetCurrentPoint(this).Properties;
         var button = props.IsRightButtonPressed ? 2 : props.IsMiddleButtonPressed ? 1 : 0;
+
+        // Check modifiers for Ctrl+Click
+        var modifiers = e.KeyModifiers;
+        if (modifiers.HasFlag(KeyModifiers.Control))
+            AppServices.ToolManager.InvokeKeyDown("Control");
+
         AppServices.ToolManager.InvokeMouseDown(nx, ny, button);
         e.Handled = true;
     }
@@ -105,6 +112,45 @@ public partial class ViewportPanel : UserControl
         e.Handled = true;
     }
 
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        // Global keyboard shortcuts
+        switch (e.Key)
+        {
+            case Key.Escape:
+                AppServices.CommandManager.Execute("ClearSelection");
+                e.Handled = true;
+                break;
+            case Key.A when e.KeyModifiers.HasFlag(KeyModifiers.Control):
+                AppServices.CommandManager.Execute("SelectAll");
+                e.Handled = true;
+                break;
+            case Key.A when !e.KeyModifiers.HasFlag(KeyModifiers.Control):
+                AppServices.CommandManager.Execute("SelectAll");
+                e.Handled = true;
+                break;
+            default:
+                // Forward to active tool
+                var keyStr = e.Key switch
+                {
+                    Key.LeftCtrl or Key.RightCtrl => "Control",
+                    Key.LeftShift or Key.RightShift => "Shift",
+                    _ => e.Key.ToString(),
+                };
+                AppServices.ToolManager.InvokeKeyDown(keyStr);
+                break;
+        }
+    }
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        base.OnKeyUp(e);
+        if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            AppServices.ToolManager.InvokeKeyDown(""); // Reset Ctrl state in tool
+    }
+
     private void OnToolActivated(EventData data)
     {
         Dispatcher.UIThread.Post(() => UpdateCursor());
@@ -137,7 +183,7 @@ public partial class ViewportPanel : UserControl
     {
         Dispatcher.UIThread.Post(() =>
         {
-            var count = AppServices.SelectionManager.Count;
+            var count = AppServices.SelectionService.Count;
             SelectionDisplay.Text = count > 0 ? $"{count} selected" : "";
         });
     }

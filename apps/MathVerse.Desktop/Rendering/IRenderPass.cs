@@ -17,7 +17,8 @@ public readonly record struct RenderContext(
     float CursorWorldY,
     string ActiveToolName,
     int SelectionCount,
-    string StatusMessage);
+    string StatusMessage,
+    (float x, float y, float w, float h)? SelectionBox = null);
 
 public interface IRenderPass
 {

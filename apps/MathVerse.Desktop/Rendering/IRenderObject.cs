@@ -34,4 +34,6 @@ public interface IRenderObject
     int ZOrder { get; set; }
     DirtyFlag Dirty { get; set; }
     void Draw(PixelBuffer buffer, in RenderContext context);
+    float HitTest(float worldX, float worldY);
+    bool IntersectsBox(float minX, float maxX, float minY, float maxY);
 }
